@@ -1,5 +1,7 @@
 # ZHAI VIDEO VIEW
 
+![favicon](/src/favicon.ico)
+
 I need a beautiful and practical video player, so I wrote it...
 
 ZHAI VIDEO VIEW build for .Net 6, base on VLC

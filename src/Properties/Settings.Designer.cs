@@ -25,7 +25,7 @@ namespace Zhai.VideoView.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ZDY \' VIDEO")]
+        [global::System.Configuration.DefaultSettingValueAttribute(" ZDY \' VIDEO")]
         public string AppName {
             get {
                 return ((string)(this["AppName"]));
