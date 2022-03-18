@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="Zhai.VideoView.VideoViewElementControllerPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Zhai.VideoView"
+             xmlns:Converters="clr-namespace:Zhai.VideoView.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1101.19">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="ToggleButton" BasedOn="{StaticResource ModernToggleButtonStyle}"/>
+            <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}"/>
+            <Style TargetType="Path" BasedOn="{StaticResource MediaElementIcon}"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Name="Controls" Background="Transparent" ClipToBounds="True">
+        <Canvas IsHitTestVisible="False" Background="{StaticResource ShadedBackgroundBrush}" MouseDown="Canvas_MouseDown"/>
+
+        <Grid VerticalAlignment="Bottom" Margin="0 24 0 6">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16"></RowDefinition>
+                <RowDefinition Height="54"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Slider Name="PositionSlider" Grid.Row="0" Cursor="Hand"
+                    Style="{StaticResource VideoView.PositionSlider}"
+                    IsSnapToTickEnabled="False" Maximum="1" Minimum="0"
+                    Thumb.DragCompleted="PositionSlider_DragCompleted"  
+                    Thumb.DragDelta="PositionSlider_DragDelta"
+                    Thumb.DragStarted="PositionSlider_DragStarted"
+                    Value="{Binding Mode=OneWay, Path=Position}"/>
+
+            <Grid Grid.Row="1" Margin="20 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
+
+                <DockPanel Name="LeftControls" HorizontalAlignment="Left" Grid.Column="0">
+                    <StackPanel Orientation="Horizontal" Height="14">
+                        <TextBlock FontSize="12" Text="{Binding Time, Converter={StaticResource TimeSpanFromSecondsConverter}}" Foreground="White" FontWeight="Thin"/>
+                        <TextBlock FontSize="12" Text=" - " Foreground="White" FontWeight="Thin"/>
+                        <TextBlock FontSize="12" Text="{Binding Length, Converter={StaticResource TimeSpanFromSecondsConverter}}" Foreground="White" FontWeight="Thin"/>
+                    </StackPanel>
+                </DockPanel>
+
+                <DockPanel Name="RightControls" HorizontalAlignment="Right" Grid.Column="2">
+
+                    <ToggleButton Name="MuteButton" IsChecked="{Binding IsMuted, Mode=TwoWay}" Style="{StaticResource VideoView.IconToggleButton}">
+                        <Grid>
+                            <Path Data="{StaticResource Icon.Mute}" Visibility="{Binding IsMuted, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <Path Data="{StaticResource Icon.Unmute}" Visibility="{Binding IsMuted, Converter={StaticResource BoolToInverseVisibilityConverter}}"/>
+                        </Grid>
+                    </ToggleButton>
+
+                    <Slider Name="VolumeSlider" Cursor="Hand"
+                            Style="{StaticResource VideoView.CustomSlider}" 
+                            IsEnabled="{Binding IsMuted, Converter={StaticResource BoolToInverseBoolConverter}}" 
+                            Width="120" Minimum="0" Maximum="100" Margin="4 0" 
+                            Value="{Binding Volume}"/>
+
+                    <Button Style="{StaticResource VideoView.IconButton}" >
+                        <Path Data="{StaticResource Icon.Adjust}" />
+                    </Button>
+
+                </DockPanel>
+
+                <DockPanel Name="CenterControls" HorizontalAlignment="Center" Grid.Column="1">
+                    <ToggleButton Style="{StaticResource VideoView.IconToggleButton}">
+                        <Path Data="{StaticResource Icon.Adapt}" />
+                    </ToggleButton>
+                    <Button x:Name="PrevButton" Style="{StaticResource VideoView.IconButton}">
+                        <Path Data="{StaticResource Icon.DirectionLeft}" />
+                    </Button>
+                    <Button x:Name="RewindButton" Command="{Binding ExecuteRewindCommand}" Style="{StaticResource VideoView.IconButton}">
+                        <Path Data="{StaticResource Icon.ArrowDoubleLeft}" />
+                    </Button>
+                    <Button x:Name="PlayButton" Visibility="{Binding IsPaused, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding ExecutePlayCommand}" Style="{StaticResource VideoView.IconButton}">
+                        <Path Data="{StaticResource Icon.Play}" />
+                    </Button>
+                    <Button x:Name="PauseButton" Visibility="{Binding IsPaused, Converter={StaticResource BoolToInverseVisibilityConverter}}" Command="{Binding ExecutePauseCommand}" Style="{StaticResource VideoView.IconButton}">
+                        <Path Data="{StaticResource Icon.Stop}" />
+                    </Button>
+                    <Button x:Name="ForwardButton" Command="{Binding ExecuteForwardCommand}" Style="{StaticResource VideoView.IconButton}">
+                        <Path Data="{StaticResource Icon.ArrowDoubleRight}" />
+                    </Button>
+                    <Button x:Name="NextButton" Style="{StaticResource VideoView.IconButton}">
+                        <Path Data="{StaticResource Icon.DirectionRight}" />
+                    </Button>
+                    <ToggleButton x:Name="LoopingButton" Style="{StaticResource VideoView.IconToggleButton}" IsChecked="{Binding IsLooping, Mode=TwoWay}">
+                        <Path Data="{StaticResource Icon.Switch}" />
+                    </ToggleButton>
+                </DockPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

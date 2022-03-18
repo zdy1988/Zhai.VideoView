@@ -1,0 +1,39 @@
+﻿<local:VideoWindow x:Class="Zhai.VideoView.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Zhai.VideoView"
+        xmlns:Properties="clr-namespace:Zhai.VideoView.Properties"           
+        Title="{Binding Path=AppName, Source={x:Static Properties:Settings.Default}}"
+        Style="{StaticResource VideoWindow}"
+        DataContext="{Binding VideoElement, Source={StaticResource Locator}}"
+        WindowStartupLocation="CenterScreen"
+        FontWeight="Thin"
+        Height="720" Width="960"
+        MinHeight="450" MinWidth="600"
+        mc:Ignorable="d">
+    <local:VideoWindow.TitleBar>
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button x:Name="AboutButton" Style="{StaticResource VideoView.IconButton2}" Click="AboutButton_Click" ToolTip="关于">
+                    <Path Data="{StaticResource Icon.About}"/>
+                </Button>
+                <Button x:Name="SettingsButton" Style="{StaticResource VideoView.IconButton2}" ToolTip="设置">
+                    <Path Data="{StaticResource Icon.Settings}"/>
+                </Button>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+
+            </StackPanel>
+        </DockPanel>
+    </local:VideoWindow.TitleBar>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0"/>
+        <local:VideoViewElement Grid.Row="1" x:Name="VideoViewElement"/>
+    </Grid>
+</local:VideoWindow>

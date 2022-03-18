@@ -1,0 +1,11 @@
+Play a video with audio:
+
+https://github.com/ZeBobo5/Vlc.DotNet/issues/586
+
+vlcPlayer.Play(video-stream-url, string[] { ":input-slave=" + audio-stream-url });
+
+Change Aspect Ratio:
+
+https://github.com/ZeBobo5/Vlc.DotNet/issues/571
+
+MainMedia.Video.AspectRatio = "21:9".
