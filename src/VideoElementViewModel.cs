@@ -1,5 +1,4 @@
 ﻿using LibVLCSharp.Shared;
-using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -8,11 +7,13 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Zhai.VideoView.Commands;
+using Zhai.Famil.Common.Mvvm;
+using Zhai.Famil.Common.Mvvm.Command;
+using Zhai.Famil.Win32;
 
 namespace Zhai.VideoView
 {
-    public partial class VideoElementViewModel : BaseViewModel
+    public partial class VideoElementViewModel : ViewModelBase
     {
         public VideoElementViewModel()
         {
@@ -23,6 +24,8 @@ namespace Zhai.VideoView
                 VideoSourceProvider.CreatePlayer();
 
                 LoadPlayer();
+
+                Volume = 75;
             }
             catch (Exception ex)
             {
@@ -47,49 +50,49 @@ namespace Zhai.VideoView
         public bool IsOpened
         {
             get => isOpened;
-            set => SetProperty(ref isOpened, value);
+            set => Set(() => IsOpened, ref isOpened, value); 
         }
 
         private bool isPaused;
         public bool IsPaused
         {
             get => isPaused;
-            set => SetProperty(ref isPaused, value);
+            set => Set(() => IsPaused, ref isPaused, value);
         }
 
         private bool isLoading = false;
         public bool IsLoading
         {
             get => isLoading;
-            set => SetProperty(ref isLoading, value);
+            set => Set(() => IsLoading, ref isLoading, value);
         }
 
         private long length;
         public long Length
         {
             get => length;
-            set => SetProperty(ref length, value);
+            set => Set(() => Length, ref length, value);
         }
 
         private long time;
         public long Time
         {
             get => time;
-            set => SetProperty(ref time, value);
+            set => Set(() => Time, ref time, value);
         }
 
         private float position;
         public float Position
         {
             get => position;
-            set => SetProperty(ref position, value);
+            set => Set(() => Position, ref position, value);
         }
 
         private bool isPositionChanging = false;
         public bool IsPositionChanging
         {
             get => isPositionChanging;
-            set => SetProperty(ref isPositionChanging, value);
+            set => Set(() => IsPositionChanging, ref isPositionChanging, value);
         }
 
         private bool isMuted;
@@ -98,7 +101,7 @@ namespace Zhai.VideoView
             get => isMuted;
             set
             {
-                if (SetProperty(ref isMuted, value))
+                if (Set(() => IsMuted, ref isMuted, value))
                 {
                     SetMuted(isMuted);
                 }
@@ -111,7 +114,7 @@ namespace Zhai.VideoView
             get => volume;
             set
             {
-                if (SetProperty(ref volume, value))
+                if (Set(() => Volume, ref volume, value))
                 {
                     SetVolume(volume);
                 }
@@ -122,7 +125,7 @@ namespace Zhai.VideoView
         public bool IsLooping
         {
             get => isLooping;
-            set => SetProperty(ref isLooping, value);
+            set => Set(() => IsLooping, ref isLooping, value);
         }
 
         #endregion
@@ -375,7 +378,7 @@ namespace Zhai.VideoView
 
         })).Value;
 
-        public RelayCommand ExecutePlayCommand => new Lazy<RelayCommand>(() => new RelayCommand(o =>
+        public RelayCommand ExecutePlayCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             if (IsOpened)
             {
@@ -383,37 +386,34 @@ namespace Zhai.VideoView
             }
             else
             {
-                var dialog = new OpenFileDialog
-                {
-                    Filter = VideoSupport.Filter
-                };
+                var filename = FileDialog.OpenFileDialog("", VideoSupport.Filter, "");
 
-                if (dialog.ShowDialog() is true)
-                    TryOpenMedia(dialog.FileName);
+                if (!string.IsNullOrEmpty(filename))
+                    TryOpenMedia(filename);
             }
 
         })).Value;
 
-        public RelayCommand ExecutePauseCommand => new Lazy<RelayCommand>(() => new RelayCommand(o =>
+        public RelayCommand ExecutePauseCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             this.TryPausMedia();
 
         })).Value;
 
-        public RelayCommand ExecuteStopCommand => new Lazy<RelayCommand>(() => new RelayCommand(o =>
+        public RelayCommand ExecuteStopCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             this.MediaPlayer.Stop();
 
         })).Value;
 
-        public RelayCommand ExecuteCloseCommand => new Lazy<RelayCommand>(() => new RelayCommand(o =>
+        public RelayCommand ExecuteCloseCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
 
             ThreadPool.QueueUserWorkItem(_ => this.DisposePlayer());
 
         })).Value;
 
-        public RelayCommand ExecuteForwardCommand => new Lazy<RelayCommand>(() => new RelayCommand(o =>
+        public RelayCommand ExecuteForwardCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             var rate = MediaPlayer.Rate + 0.5f;
 
@@ -424,7 +424,7 @@ namespace Zhai.VideoView
 
         })).Value;
 
-        public RelayCommand ExecuteRewindCommand => new Lazy<RelayCommand>(() => new RelayCommand(o =>
+        public RelayCommand ExecuteRewindCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             var rate = MediaPlayer.Rate - 0.5f;
 
@@ -447,10 +447,5 @@ namespace Zhai.VideoView
         }
 
         #endregion
-
-        public override void Clean()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

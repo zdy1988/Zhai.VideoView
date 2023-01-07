@@ -2,7 +2,6 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Zhai.VideoView"
-             xmlns:Converters="clr-namespace:Zhai.VideoView.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d1p1:Ignorable="d"
@@ -11,14 +10,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-         
-                <ResourceDictionary Source="pack://application:,,,/Zhai.VideoView;component/Themes/Zhai.VideoView.IconPack.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Zhai.VideoView;component/Themes/Zhai.VideoView.IconButton.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Zhai.VideoView;component/Themes/Zhai.VideoView.CopyButton.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Zhai.VideoView;component/Themes/Zhai.VideoView.LinkButton.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Zhai.VideoView;component/Themes/Zhai.VideoView.Slider.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Zhai.VideoView;component/Themes/Zhai.VideoView.VideoWindow.xaml" />
-
+                <ResourceDictionary Source="pack://application:,,,/Zhai.Famil;component/Themes/Zhai.Famil.Brushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <LinearGradientBrush x:Key="ShadedBackgroundBrush" StartPoint="0,0" EndPoint="0,1">
@@ -27,11 +19,6 @@
                     <GradientStop Offset="1" Color="#60000000" />
                 </GradientStopCollection>
             </LinearGradientBrush>
-
-            <Converters:TimeSpanFromSecondsConverter x:Key="TimeSpanFromSecondsConverter"/>
-            <Converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter"/>
-            <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-            <Converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter"/>
 
             <local:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
         </ResourceDictionary>

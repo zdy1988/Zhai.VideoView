@@ -16,10 +16,11 @@ using System.Windows.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Zhai.Famil.Common.Mvvm;
 
 namespace Zhai.VideoView
 {
-    public class VideoSourceProvider : BaseViewModel, IDisposable
+    public class VideoSourceProvider : ViewModelBase, IDisposable
     {
         public VideoSourceProvider()
         {
@@ -97,7 +98,7 @@ namespace Zhai.VideoView
         {
             get => videoSource;
 
-            private set => SetProperty(ref videoSource, value);
+            private set => Set(() => VideoSource, ref videoSource, value);
         }
 
         private bool isAlphaChannelEnabled;
@@ -307,11 +308,6 @@ namespace Zhai.VideoView
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        public override void Clean()
-        {
-            this.Dispose();
         }
 
         #endregion

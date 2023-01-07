@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
+using Zhai.Famil.Controls;
 
 namespace Zhai.VideoView
 {
     /// <summary>
     /// VideoViewerWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : VideoWindow
+    public partial class MainWindow : GlassesWindow
     {
         public MainWindow()
         {
@@ -30,10 +31,18 @@ namespace Zhai.VideoView
                 {
                     this.Close();
                 }
-                
-                if(this.WindowState == WindowState.Maximized)
+
+                if (this.WindowState == WindowState.Maximized)
                 {
                     this.WindowState = WindowState.Normal;
+                }
+            }
+            else if (e.Key == Key.Space)
+            {
+                // Toggle Play
+                if (App.VideoElementViewModel.IsOpened)
+                {
+                    App.VideoElementViewModel.ToggledPlayMedia();
                 }
             }
         }

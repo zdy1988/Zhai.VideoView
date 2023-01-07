@@ -5,14 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Zhai.VideoView"
              xmlns:Converters="clr-namespace:Zhai.VideoView.Converters"
+             xmlns:ZDY="http://www.zdyla.com/coding"
              mc:Ignorable="d" 
+             Foreground="White"
              d:DesignHeight="450" d:DesignWidth="1101.19">
     <UserControl.Resources>
-        <ResourceDictionary>
-            <Style TargetType="ToggleButton" BasedOn="{StaticResource ModernToggleButtonStyle}"/>
-            <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}"/>
-            <Style TargetType="Path" BasedOn="{StaticResource MediaElementIcon}"/>
-        </ResourceDictionary>
+        <Style TargetType="{x:Type ZDY:IconButton}">
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type ZDY:IconToggleButton}">
+            <Setter Property="Margin" Value="3"/>
+        </Style>
     </UserControl.Resources>
 
     <Grid Name="Controls" Background="Transparent" ClipToBounds="True">
@@ -24,13 +27,13 @@
                 <RowDefinition Height="54"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Slider Name="PositionSlider" Grid.Row="0" Cursor="Hand"
-                    Style="{StaticResource VideoView.PositionSlider}"
-                    IsSnapToTickEnabled="False" Maximum="1" Minimum="0"
-                    Thumb.DragCompleted="PositionSlider_DragCompleted"  
-                    Thumb.DragDelta="PositionSlider_DragDelta"
-                    Thumb.DragStarted="PositionSlider_DragStarted"
-                    Value="{Binding Mode=OneWay, Path=Position}"/>
+            <ZDY:Slider Name="PositionSlider" Grid.Row="0" Cursor="Hand"
+                        Foreground="{StaticResource Zhai.Famil.ColorfulBrush}"
+                        IsSnapToTickEnabled="False" Maximum="1" Minimum="0"
+                        Thumb.DragCompleted="PositionSlider_DragCompleted"  
+                        Thumb.DragDelta="PositionSlider_DragDelta"
+                        Thumb.DragStarted="PositionSlider_DragStarted"
+                        Value="{Binding Mode=OneWay, Path=Position}"/>
 
             <Grid Grid.Row="1" Margin="20 0">
                 <Grid.ColumnDefinitions>
@@ -41,58 +44,34 @@
 
                 <DockPanel Name="LeftControls" HorizontalAlignment="Left" Grid.Column="0">
                     <StackPanel Orientation="Horizontal" Height="14">
-                        <TextBlock FontSize="12" Text="{Binding Time, Converter={StaticResource TimeSpanFromSecondsConverter}}" Foreground="White" FontWeight="Thin"/>
-                        <TextBlock FontSize="12" Text=" - " Foreground="White" FontWeight="Thin"/>
-                        <TextBlock FontSize="12" Text="{Binding Length, Converter={StaticResource TimeSpanFromSecondsConverter}}" Foreground="White" FontWeight="Thin"/>
+                        <TextBlock FontSize="12" Text="{Binding Time, Converter={Converters:TimeSpanFromSecondsConverter}}"/>
+                        <TextBlock FontSize="12" Text=" - "/>
+                        <TextBlock FontSize="12" Text="{Binding Length, Converter={Converters:TimeSpanFromSecondsConverter}}"/>
                     </StackPanel>
                 </DockPanel>
 
                 <DockPanel Name="RightControls" HorizontalAlignment="Right" Grid.Column="2">
 
-                    <ToggleButton Name="MuteButton" IsChecked="{Binding IsMuted, Mode=TwoWay}" Style="{StaticResource VideoView.IconToggleButton}">
-                        <Grid>
-                            <Path Data="{StaticResource Icon.Mute}" Visibility="{Binding IsMuted, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            <Path Data="{StaticResource Icon.Unmute}" Visibility="{Binding IsMuted, Converter={StaticResource BoolToInverseVisibilityConverter}}"/>
-                        </Grid>
-                    </ToggleButton>
+                    <ZDY:IconToggleButton x:Name="MuteButton" IsChecked="{Binding IsMuted, Mode=TwoWay}" CheckedIcon="VolumeSlash" Icon="VolumeHigh"/>
 
-                    <Slider Name="VolumeSlider" Cursor="Hand"
-                            Style="{StaticResource VideoView.CustomSlider}" 
-                            IsEnabled="{Binding IsMuted, Converter={StaticResource BoolToInverseBoolConverter}}" 
+                    <ZDY:Slider2 Name="VolumeSlider" Cursor="Hand" Foreground="{StaticResource Zhai.Famil.ColorfulBrush}"
+                            IsEnabled="{Binding IsMuted, Converter={ZDY:BoolToInverseBoolConverter}}" 
                             Width="120" Minimum="0" Maximum="100" Margin="4 0" 
                             Value="{Binding Volume}"/>
 
-                    <Button Style="{StaticResource VideoView.IconButton}" >
-                        <Path Data="{StaticResource Icon.Adjust}" />
-                    </Button>
+                    <ZDY:IconButton Icon="Adjust"/>
 
                 </DockPanel>
 
                 <DockPanel Name="CenterControls" HorizontalAlignment="Center" Grid.Column="1">
-                    <ToggleButton Style="{StaticResource VideoView.IconToggleButton}">
-                        <Path Data="{StaticResource Icon.Adapt}" />
-                    </ToggleButton>
-                    <Button x:Name="PrevButton" Style="{StaticResource VideoView.IconButton}">
-                        <Path Data="{StaticResource Icon.DirectionLeft}" />
-                    </Button>
-                    <Button x:Name="RewindButton" Command="{Binding ExecuteRewindCommand}" Style="{StaticResource VideoView.IconButton}">
-                        <Path Data="{StaticResource Icon.ArrowDoubleLeft}" />
-                    </Button>
-                    <Button x:Name="PlayButton" Visibility="{Binding IsPaused, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding ExecutePlayCommand}" Style="{StaticResource VideoView.IconButton}">
-                        <Path Data="{StaticResource Icon.Play}" />
-                    </Button>
-                    <Button x:Name="PauseButton" Visibility="{Binding IsPaused, Converter={StaticResource BoolToInverseVisibilityConverter}}" Command="{Binding ExecutePauseCommand}" Style="{StaticResource VideoView.IconButton}">
-                        <Path Data="{StaticResource Icon.Stop}" />
-                    </Button>
-                    <Button x:Name="ForwardButton" Command="{Binding ExecuteForwardCommand}" Style="{StaticResource VideoView.IconButton}">
-                        <Path Data="{StaticResource Icon.ArrowDoubleRight}" />
-                    </Button>
-                    <Button x:Name="NextButton" Style="{StaticResource VideoView.IconButton}">
-                        <Path Data="{StaticResource Icon.DirectionRight}" />
-                    </Button>
-                    <ToggleButton x:Name="LoopingButton" Style="{StaticResource VideoView.IconToggleButton}" IsChecked="{Binding IsLooping, Mode=TwoWay}">
-                        <Path Data="{StaticResource Icon.Switch}" />
-                    </ToggleButton>
+                    <ZDY:IconToggleButton Icon="Adapt"/>
+                    <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft"/>
+                    <ZDY:IconButton x:Name="RewindButton" Icon="ToggleLeft" Command="{Binding ExecuteRewindCommand}"/>
+                    <ZDY:IconButton x:Name="PlayButton" Icon="Play2" ToolTip="播放" Command="{Binding ExecutePlayCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                    <ZDY:IconButton x:Name="PauseButton" Icon="Pause" ToolTip="暂停" Command="{Binding ExecutePauseCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
+                    <ZDY:IconButton x:Name="ForwardButton" Icon="ToggleRight" Command="{Binding ExecuteForwardCommand}"/>
+                    <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight"/>
+                    <ZDY:IconToggleButton x:Name="LoopingButton" CheckedIcon="Repeat" Icon="RepeateOne" IsChecked="{Binding IsLooping, Mode=TwoWay}"/>
                 </DockPanel>
             </Grid>
         </Grid>

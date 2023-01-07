@@ -61,15 +61,6 @@ namespace Zhai.VideoView
                 LastMouseMoveTime = DateTime.UtcNow.Subtract(TimeSpan.FromSeconds(10));
             };
 
-            VideoViewerContorl.MouseLeftButtonDown += (s, e) =>
-            {
-                // Toggle Play
-                if (App.VideoElementViewModel.IsOpened)
-                {
-                    App.VideoElementViewModel.ToggledPlayMedia();
-                }
-            };
-
             VideoViewerContorl.AllowDrop = true;
 
             VideoViewerContorl.Drop += (s, e) =>
@@ -161,18 +152,20 @@ namespace Zhai.VideoView
 
         #region DependencyProperty
 
-        public static readonly DependencyProperty VideoSourceProperty = DependencyProperty.Register(nameof(VideoSource), typeof(object), typeof(VideoViewElement), new PropertyMetadata(new PropertyChangedCallback((sender, e) =>
-        {
-            if (sender is VideoViewElement videoViewer && e.NewValue is string localPath)
-            {
-                videoViewer.OpenMedia(localPath);
-            }
-        })));
+        public static readonly DependencyProperty VideoSourceProperty = DependencyProperty.Register(nameof(VideoSource), typeof(object), typeof(VideoViewElement), new PropertyMetadata(OnVideoSourceChanged));
 
         public object VideoSource
         {
             get => (object)GetValue(VideoSourceProperty);
             set => SetValue(VideoSourceProperty, value);
+        }
+
+        private static void OnVideoSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is VideoViewElement videoViewer && e.NewValue is string localPath)
+            {
+                videoViewer.OpenMedia(localPath);
+            }
         }
 
         #endregion
