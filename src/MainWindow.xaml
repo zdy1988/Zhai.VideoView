@@ -1,4 +1,4 @@
-﻿<ZDY:GlassesWindow x:Class="Zhai.VideoView.MainWindow"
+﻿<ZDY:TransparentWindow x:Class="Zhai.VideoView.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -16,15 +16,15 @@
         MinHeight="450" MinWidth="600"
         Icon="favicon.ico"
         mc:Ignorable="d">
-    <ZDY:GlassesWindow.Resources>
+    <ZDY:TransparentWindow.Resources>
         <Style TargetType="{x:Type ZDY:IconButton}">
             <Setter Property="Margin" Value="3"/>
         </Style>
         <Style TargetType="{x:Type ZDY:IconToggleButton}">
             <Setter Property="Margin" Value="3"/>
         </Style>
-    </ZDY:GlassesWindow.Resources>
-    <ZDY:GlassesWindow.TitleBarContent>
+    </ZDY:TransparentWindow.Resources>
+    <ZDY:TransparentWindow.TitleBarContent>
         <DockPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <ZDY:IconButton x:Name="AboutButton" Icon="About" ToolTip="关于" Click="AboutButton_Click"/>
@@ -34,8 +34,8 @@
 
             </StackPanel>
         </DockPanel>
-    </ZDY:GlassesWindow.TitleBarContent>
+    </ZDY:TransparentWindow.TitleBarContent>
     <Grid>
         <local:VideoViewElement x:Name="VideoViewElement"/>
     </Grid>
-</ZDY:GlassesWindow>
+</ZDY:TransparentWindow>

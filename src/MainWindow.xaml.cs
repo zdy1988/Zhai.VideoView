@@ -8,7 +8,7 @@ namespace Zhai.VideoView
     /// <summary>
     /// VideoViewerWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : GlassesWindow
+    public partial class MainWindow : TransparentWindow
     {
         public MainWindow()
         {
