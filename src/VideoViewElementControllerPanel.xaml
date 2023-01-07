@@ -47,6 +47,15 @@
                         <TextBlock FontSize="12" Text="{Binding Time, Converter={Converters:TimeSpanFromSecondsConverter}}"/>
                         <TextBlock FontSize="12" Text=" - "/>
                         <TextBlock FontSize="12" Text="{Binding Length, Converter={Converters:TimeSpanFromSecondsConverter}}"/>
+                        <StackPanel.Style>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.56"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
                     </StackPanel>
                 </DockPanel>
 
@@ -64,14 +73,32 @@
                 </DockPanel>
 
                 <DockPanel Name="CenterControls" HorizontalAlignment="Center" Grid.Column="1">
-                    <ZDY:IconToggleButton Icon="Adapt"/>
-                    <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft"/>
-                    <ZDY:IconButton x:Name="RewindButton" Icon="ToggleLeft" Command="{Binding ExecuteRewindCommand}"/>
+                    <ZDY:IconToggleButton x:Name="LoopingButton" CheckedIcon="RepeateMusic" Icon="RepeateOne" IsChecked="{Binding IsLooping, Mode=TwoWay}"/>
                     <ZDY:IconButton x:Name="PlayButton" Icon="Play2" ToolTip="播放" Command="{Binding ExecutePlayCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToVisibilityConverter}}"/>
                     <ZDY:IconButton x:Name="PauseButton" Icon="Pause" ToolTip="暂停" Command="{Binding ExecutePauseCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
-                    <ZDY:IconButton x:Name="ForwardButton" Icon="ToggleRight" Command="{Binding ExecuteForwardCommand}"/>
-                    <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight"/>
-                    <ZDY:IconToggleButton x:Name="LoopingButton" CheckedIcon="Repeat" Icon="RepeateOne" IsChecked="{Binding IsLooping, Mode=TwoWay}"/>
+                    <Grid>
+                        <ZDY:Badged HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 -24 -24 0" BadgeBackground="{StaticResource Zhai.Famil.ColorfulBrush}">
+                            <ZDY:Badged.Badge>
+                                <TextBlock>
+                                    <Run Text="×"/>
+                                    <Run Text="{Binding Rate}"/>
+                                </TextBlock>
+                            </ZDY:Badged.Badge>
+                            <ZDY:Badged.Style>
+                                <Style TargetType="{x:Type ZDY:Badged}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Rate}" Value="1.0">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ZDY:Badged.Style>
+                        </ZDY:Badged>
+                        <ZDY:IconButton x:Name="RateButton" Icon="BoxTimePlay" ToolTip="倍速"/>
+                        <ZDY:Popup Placement="Top" PlacementTarget="{Binding ElementName=RateButton}" AllowsTransparency="True" PopupAnimation="Fade">
+                            <ZDY:ListBox Width="80" ItemsSource="{Binding Rates}" DisplayMemberPath="Key" SelectedValuePath="Value" SelectedValue="{Binding Rate}"/>
+                        </ZDY:Popup>
+                    </Grid>
                 </DockPanel>
             </Grid>
         </Grid>

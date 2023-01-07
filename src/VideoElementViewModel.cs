@@ -1,5 +1,6 @@
 ﻿using LibVLCSharp.Shared;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -43,6 +44,17 @@ namespace Zhai.VideoView
 
         public Media CurrentMedia { get; private set; }
 
+        public Dictionary<string, float> Rates => new Dictionary<string, float>
+        {
+           {"0.25", 0.25f},
+           {"0.5", 0.5f},
+           {"0.75", 0.75f},
+           {"正常", 1f},
+           {"1.25", 1.25f},
+           {"1.5", 1.5f},
+           {"1.75", 1.75f},
+           {"2", 2f},
+        };
 
         #region Properties
 
@@ -117,6 +129,19 @@ namespace Zhai.VideoView
                 if (Set(() => Volume, ref volume, value))
                 {
                     SetVolume(volume);
+                }
+            }
+        }
+
+        private float rate = 1.0f;
+        public float Rate
+        {
+            get => rate;
+            set
+            {
+                if (Set(() => Rate, ref rate, value))
+                {
+                    SetRate(rate);
                 }
             }
         }
@@ -368,6 +393,14 @@ namespace Zhai.VideoView
             }
         }
 
+        public void SetRate(float rate)
+        {
+            if (IsOpened)
+            {
+                this.MediaPlayer.SetRate(rate);
+            }
+        }
+
         #endregion
 
         #region Commands
@@ -413,25 +446,31 @@ namespace Zhai.VideoView
 
         })).Value;
 
-        public RelayCommand ExecuteForwardCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        public RelayCommand ExecuteRateUpCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             var rate = MediaPlayer.Rate + 0.5f;
 
             if (rate <= 5)
             {
-                this.MediaPlayer.SetRate(rate);
+                this.Rate = rate;
             }
 
         })).Value;
 
-        public RelayCommand ExecuteRewindCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        public RelayCommand ExecuteRateDownCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             var rate = MediaPlayer.Rate - 0.5f;
 
             if (rate >= -5)
             {
-                this.MediaPlayer.SetRate(rate);
+                this.Rate = rate;
             }
+
+        })).Value;
+
+        public RelayCommand<float> ExecuteSetRateCommand => new Lazy<RelayCommand<float>>(() => new RelayCommand<float>(rate =>
+        {
+            this.Rate = rate;
 
         })).Value;
 

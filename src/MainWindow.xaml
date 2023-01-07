@@ -16,19 +16,12 @@
         MinHeight="450" MinWidth="600"
         Icon="favicon.ico"
         mc:Ignorable="d">
-    <ZDY:TransparentWindow.Resources>
-        <Style TargetType="{x:Type ZDY:IconButton}">
-            <Setter Property="Margin" Value="3"/>
-        </Style>
-        <Style TargetType="{x:Type ZDY:IconToggleButton}">
-            <Setter Property="Margin" Value="3"/>
-        </Style>
-    </ZDY:TransparentWindow.Resources>
     <ZDY:TransparentWindow.TitleBarContent>
         <DockPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <ZDY:IconButton x:Name="AboutButton" Icon="About" ToolTip="关于" Click="AboutButton_Click"/>
                 <ZDY:IconButton x:Name="SettingsButton" Icon="Settings" ToolTip="设置"/>
+                <ZDY:IconToggleButton Icon="Adapt"/>
             </StackPanel>
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
 
