@@ -1,4 +1,5 @@
 ﻿using LibVLCSharp.Shared;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +11,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using Zhai.Famil.Common.Mvvm;
 using Zhai.Famil.Common.Mvvm.Command;
-using Zhai.Famil.Win32;
 
 namespace Zhai.VideoView
 {
@@ -419,10 +419,13 @@ namespace Zhai.VideoView
             }
             else
             {
-                var filename = FileDialog.OpenFileDialog("", VideoSupport.Filter, "");
+                var dialog = new OpenFileDialog
+                {
+                    Filter = VideoSupport.Filter
+                };
 
-                if (!string.IsNullOrEmpty(filename))
-                    TryOpenMedia(filename);
+                if (dialog.ShowDialog() is true)
+                    TryOpenMedia(dialog.FileName);
             }
 
         })).Value;

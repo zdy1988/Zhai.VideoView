@@ -32,7 +32,7 @@
                                     Visibility="{Binding IsOpened,Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
                 </Border>
 
-                <Border x:Name="ControllerPanelViewBox" IsEnabled="{Binding IsOpened}" VerticalAlignment="Bottom">
+                <Border x:Name="ControllerPanelViewBox" Visibility="{Binding IsOpened, Converter={ZDY:BoolToVisibilityConverter}}" VerticalAlignment="Bottom">
                     <local:VideoViewElementControllerPanel x:Name="ControllerPanel"/>
                 </Border>
             </Grid>
