@@ -1,11 +1,9 @@
 ﻿using LibVLCSharp.Shared;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Zhai.Famil.Common.Mvvm;
-using Zhai.Famil.Common.Mvvm.Command;
 
 namespace Zhai.VideoView
 {
@@ -250,7 +248,7 @@ namespace Zhai.VideoView
 
                 LoadPlayer();
 
-                Volume = 75;
+                Volume = Properties.Settings.Default.Volume;
             }
             catch (Exception ex)
             {
@@ -265,8 +263,6 @@ namespace Zhai.VideoView
             this.RegisteredEvents(this.LibVLC, this.MediaPlayer);
 
             this.ResetPlayer();
-
-            this.Volume = this.MediaPlayer.Volume;
         }
 
         public void DisposePlayer()
@@ -377,6 +373,9 @@ namespace Zhai.VideoView
             if (IsOpened)
             {
                 this.MediaPlayer.Volume = volume;
+
+                Properties.Settings.Default.Volume = volume;
+                Properties.Settings.Default.Save();
             }
         }
 
@@ -395,76 +394,6 @@ namespace Zhai.VideoView
                 this.MediaPlayer.SetRate(rate);
             }
         }
-
-        #endregion
-
-        #region Commands
-
-        public RelayCommand ExecutePlayCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
-        {
-            if (IsOpened)
-            {
-                this.TryPlayVideo();
-            }
-            else
-            {
-                var dialog = new OpenFileDialog
-                {
-                    Filter = VideoSupport.Filter
-                };
-
-                if (dialog.ShowDialog() is true)
-                    OpenVideo(dialog.FileName);
-            }
-
-        })).Value;
-
-        public RelayCommand ExecutePauseCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
-        {
-            this.TryPausVideo();
-
-        })).Value;
-
-        public RelayCommand ExecuteStopCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
-        {
-            this.MediaPlayer.Stop();
-
-        })).Value;
-
-        public RelayCommand ExecuteCloseCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
-        {
-
-            ThreadPool.QueueUserWorkItem(_ => this.DisposePlayer());
-
-        })).Value;
-
-        public RelayCommand ExecuteRateUpCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
-        {
-            var rate = MediaPlayer.Rate + 0.5f;
-
-            if (rate <= 5)
-            {
-                this.Rate = rate;
-            }
-
-        })).Value;
-
-        public RelayCommand ExecuteRateDownCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
-        {
-            var rate = MediaPlayer.Rate - 0.5f;
-
-            if (rate >= -5)
-            {
-                this.Rate = rate;
-            }
-
-        })).Value;
-
-        public RelayCommand<float> ExecuteSetRateCommand => new Lazy<RelayCommand<float>>(() => new RelayCommand<float>(rate =>
-        {
-            this.Rate = rate;
-
-        })).Value;
 
         #endregion
 

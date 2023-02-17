@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Effects;
 using Zhai.Famil.Common.Mvvm;
+using Zhai.Famil.Common.Mvvm.Command;
 using Zhai.Famil.Common.Threads;
 using Zhai.Famil.Controls;
 using Zhai.PictureView;
@@ -94,6 +96,151 @@ namespace Zhai.VideoView
 
         #endregion
 
+        #region Commands
+
+        public RelayCommand ExecuteOpenCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = VideoSupport.Filter
+            };
+
+            if (dialog.ShowDialog() is true)
+                OpenVideo(dialog.FileName);
+
+        })).Value;
+
+        public RelayCommand ExecutePlayCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            if (IsOpened)
+            {
+                this.TryPlayVideo();
+            }
+            else
+            {
+                ExecuteOpenCommand.Execute(null);
+            }
+
+        })).Value;
+
+        public RelayCommand ExecutePauseCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            this.TryPausVideo();
+
+        })).Value;
+
+        public RelayCommand ExecuteStopCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            this.MediaPlayer.Stop();
+
+        })).Value;
+
+        public RelayCommand ExecuteCloseCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+
+            ThreadPool.QueueUserWorkItem(_ => this.DisposePlayer());
+
+        })).Value;
+
+        public RelayCommand ExecuteRateUpCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            var rate = MediaPlayer.Rate + 0.5f;
+
+            if (rate <= 5)
+            {
+                this.Rate = rate;
+            }
+
+        })).Value;
+
+        public RelayCommand ExecuteRateDownCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            var rate = MediaPlayer.Rate - 0.5f;
+
+            if (rate >= -5)
+            {
+                this.Rate = rate;
+            }
+
+        })).Value;
+
+        public RelayCommand<float> ExecuteSetRateCommand => new Lazy<RelayCommand<float>>(() => new RelayCommand<float>(rate =>
+        {
+            this.Rate = rate;
+
+        })).Value;
+
+        public RelayCommand ExecuteNextCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
+        {
+            if (Folder == null || !Folder.Any()) return;
+
+            var index = CurrentVideoIndex + 1;
+
+            if (index <= Folder.Count - 1)
+            {
+                CurrentVideoIndex = index;
+            }
+            else
+            {
+                var canNextFolder = Folder.GetNext(out DirectoryInfo next);
+
+                if (canNextFolder)
+                {
+                    var navWindow = new NavWindow("Next", next)
+                    {
+                        Owner = App.Current.MainWindow,
+                        DataContext = Folder.Current
+                    };
+
+                    if (navWindow.ShowDialog() == true)
+                    {
+                        await OpenVideo(next, null, Folder.Borthers);
+
+                        return;
+                    }
+                }
+
+                CurrentVideoIndex = 0;
+            }
+
+        })).Value;
+
+        public RelayCommand ExecutePrevCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
+        {
+            if (Folder == null || !Folder.Any()) return;
+
+            var index = CurrentVideoIndex - 1;
+
+            if (index >= 0)
+            {
+                CurrentVideoIndex = index;
+            }
+            else
+            {
+                var canPrevFolder = Folder.GetPrev(out DirectoryInfo prev);
+
+                if (canPrevFolder)
+                {
+                    var navWindow = new NavWindow("Prev", prev)
+                    {
+                        Owner = App.Current.MainWindow,
+                        DataContext = Folder.Current
+                    };
+
+                    if (navWindow.ShowDialog() == true)
+                    {
+                        await OpenVideo(prev, null, Folder.Borthers);
+
+                        return;
+                    }
+                }
+
+                CurrentVideoIndex = Folder.Count - 1;
+            }
+
+        })).Value;
+
+        #endregion
 
         public event EventHandler<Video> CurrentVideoChanged;
 

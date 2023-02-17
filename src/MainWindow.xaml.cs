@@ -7,8 +7,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using Zhai.Famil.Controls;
-using Zhai.PictureView;
-using System.Linq;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
@@ -24,6 +22,8 @@ namespace Zhai.VideoView
         public MainWindow()
         {
             InitializeComponent();
+
+            InitializeMainWindow();
 
             InitializeMediaControl();
 
@@ -43,6 +43,16 @@ namespace Zhai.VideoView
         private Point LastMousePosition;
         private DispatcherTimer MouseMoveTimer;
         private bool IsControllerHideCompleted;
+
+        private void InitializeMainWindow()
+        {
+            var settings = Properties.Settings.Default;
+
+            if (settings.IsStartWindowMaximized)
+            {
+                this.WindowState = WindowState.Maximized;
+            }
+        }
 
         private void InitializeMediaControl()
         {
@@ -193,6 +203,16 @@ namespace Zhai.VideoView
         private void AboutButton_Click(object sender, RoutedEventArgs e)
         {
             var window = new AboutWindow
+            {
+                Owner = App.Current.MainWindow
+            };
+
+            window.ShowDialog();
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+                        var window = new SettingsWindow
             {
                 Owner = App.Current.MainWindow
             };

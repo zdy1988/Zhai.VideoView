@@ -9,5 +9,7 @@ namespace Zhai.VideoView
     internal class ViewModelLocator
     {
         public VideoWindowViewModel VideoWindow { get; } = new VideoWindowViewModel();
+
+        public SettingsWindowViewModel SettingsWindow { get; } = new SettingsWindowViewModel();
     }
 }

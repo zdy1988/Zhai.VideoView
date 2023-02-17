@@ -10,12 +10,20 @@
              Foreground="White"
              d:DesignHeight="450" d:DesignWidth="1101.19">
     <UserControl.Resources>
-        <Style TargetType="{x:Type ZDY:IconButton}">
-            <Setter Property="Margin" Value="3"/>
-        </Style>
-        <Style TargetType="{x:Type ZDY:IconToggleButton}">
-            <Setter Property="Margin" Value="3"/>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Zhai.Famil;component/Themes/Zhai.Famil.ToolTip.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="{x:Type ToolTip}" BasedOn="{StaticResource Zhai.Famil.ToolTip}"/>
+
+            <Style TargetType="{x:Type ZDY:IconButton}">
+                <Setter Property="Margin" Value="3"/>
+            </Style>
+            <Style TargetType="{x:Type ZDY:IconToggleButton}">
+                <Setter Property="Margin" Value="3"/>
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid Background="Transparent" ClipToBounds="True">
@@ -33,7 +41,7 @@
                         Thumb.DragCompleted="PositionSlider_DragCompleted"  
                         Thumb.DragDelta="PositionSlider_DragDelta"
                         Thumb.DragStarted="PositionSlider_DragStarted"
-                        Value="{Binding Mode=OneWay, Path=Position}"/>
+                        Value="{Binding Mode=OneWay, Path=Position, Delay=1}"/>
 
             <Grid Grid.Row="1" Margin="20 0">
                 <Grid.ColumnDefinitions>
@@ -66,16 +74,19 @@
                     <ZDY:Slider2 Name="VolumeSlider" Cursor="Hand" Foreground="{StaticResource Zhai.Famil.ColorfulBrush}"
                             IsEnabled="{Binding IsMuted, Converter={ZDY:BoolToInverseBoolConverter}}" 
                             Width="120" Minimum="0" Maximum="100" Margin="4 0" 
-                            Value="{Binding Volume}"/>
+                            Value="{Binding Volume, Delay=1}"/>
 
                     <ZDY:IconButton Icon="Adjust"/>
 
                 </DockPanel>
 
                 <DockPanel Name="CenterControls" HorizontalAlignment="Center" Grid.Column="1">
-                    <ZDY:IconToggleButton x:Name="LoopingButton" CheckedIcon="RepeateMusic" Icon="RepeateOne" IsChecked="{Binding IsLooping, Mode=TwoWay}"/>
+                    <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Command="{Binding ExecuteOpenCommand}"/>
+                    <ZDY:IconToggleButton x:Name="LoopingButton" CheckedIcon="Refresh" CheckedToolTip="关闭循环" Icon="Refresh" ToolTip="循环播放" IsChecked="{Binding IsLooping, Mode=TwoWay}"/>
+                    <ZDY:IconButton x:Name="PrevButton" Icon="Previous" ToolTip="上一个" Command="{Binding ExecutePrevCommand}"/>
                     <ZDY:IconButton x:Name="PlayButton" Icon="Play2" ToolTip="播放" Command="{Binding ExecutePlayCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToVisibilityConverter}}"/>
                     <ZDY:IconButton x:Name="PauseButton" Icon="Pause" ToolTip="暂停" Command="{Binding ExecutePauseCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
+                    <ZDY:IconButton x:Name="NextButton" Icon="Next" ToolTip="下一个" Command="{Binding ExecuteNextCommand}"/>
                     <Grid>
                         <ZDY:Badged HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 -24 -24 0" BadgeBackground="{StaticResource Zhai.Famil.ColorfulBrush}">
                             <ZDY:Badged.Badge>
@@ -94,11 +105,14 @@
                                 </Style>
                             </ZDY:Badged.Style>
                         </ZDY:Badged>
-                        <ZDY:IconButton x:Name="RateButton" Icon="BoxTimePlay" ToolTip="倍速"/>
+                        <ZDY:IconButton x:Name="RateButton" Icon="PlayCricle" ToolTip="倍速"/>
                         <ZDY:Popup Placement="Top" PlacementTarget="{Binding ElementName=RateButton}" AllowsTransparency="True" PopupAnimation="Fade">
                             <ZDY:ListBox Width="80" ItemsSource="{Binding Rates}" DisplayMemberPath="Key" SelectedValuePath="Value" SelectedValue="{Binding Rate}"/>
                         </ZDY:Popup>
                     </Grid>
+                    <ZDY:IconToggleButton x:Name="VideoListViewToggleButton" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
+                                          IsChecked="{Binding IsShowVideoListView}" IsEnabled="{Binding CurrentVideo, Converter={ZDY:NullableToBoolConverter}}"
+                                          Visibility="{Binding IsVideoCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
                 </DockPanel>
             </Grid>
         </Grid>

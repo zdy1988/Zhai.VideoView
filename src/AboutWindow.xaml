@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ZDY="http://www.zdyla.com/coding"
         xmlns:Properties="clr-namespace:Zhai.VideoView.Properties"
-        IsTransparency="False"
         Theme="Dark"    
         WindowStartupLocation ="CenterScreen"             
         Title="{Binding Path=AppName, Source={x:Static Properties:Settings.Default}, StringFormat=关于 {0}}"
@@ -39,7 +38,7 @@
                         </Style>
                     </StackPanel.Resources>
                     <StackPanel Orientation="Horizontal" Margin="0 0 0 12">
-                        <Image Source="favicon.ico" Width="24" Height="24" Margin="0 0 4 0"/>
+                        <Image Source="favicon2.ico" Width="24" Height="24" Margin="0 0 4 0"/>
                         <TextBlock x:Name="TextBlock_AppName" Text="ZDY" FontSize="24" Margin="0" VerticalAlignment="Center"/>
                     </StackPanel>
 
