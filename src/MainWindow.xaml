@@ -52,7 +52,7 @@
     </ZDY:GlassesWindow.TitleBarContent>
     <Grid>
         <vlc:VideoView x:Name="VideoViewer" Background="Transparent" BorderThickness="0">
-            <Grid x:Name="VideoViewerContorl" Background="#01000000" AllowDrop="True">
+            <Grid x:Name="VideoViewerContorl" Background="#01000000">
                 <ZDY:Loading x:Name="LoadingBox" Theme="Circle" Foreground="{x:Static SystemColors.HighlightBrush}" Width="48" Height="48" Visibility="{Binding IsLoading, Converter={ZDY:BoolToVisibilityConverter}}"/>
 
                 <Border x:Name="PlayButtonViewBox" Visibility="{Binding IsLoading, Converter={ZDY:BoolToInverseVisibilityConverter}}"
