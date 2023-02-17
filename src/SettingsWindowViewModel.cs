@@ -28,15 +28,15 @@ namespace Zhai.VideoView
             }
         }
 
-        private bool isWindowTransparency = Properties.Settings.Default.IsWindowTransparency;
-        public bool IsWindowTransparency
+        private bool isWindowDarked = Properties.Settings.Default.IsWindowDarked;
+        public bool IsWindowDarked
         {
-            get => isWindowTransparency;
+            get => isWindowDarked;
             set
             {
-                if (Set(() => IsWindowTransparency, ref isWindowTransparency, value))
+                if (Set(() => IsWindowDarked, ref isWindowDarked, value))
                 {
-                    Properties.Settings.Default.IsWindowTransparency = value;
+                    Properties.Settings.Default.IsWindowDarked = value;
                     Properties.Settings.Default.Save();
                 }
             }

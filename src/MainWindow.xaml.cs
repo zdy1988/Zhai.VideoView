@@ -15,7 +15,7 @@ namespace Zhai.VideoView
     /// <summary>
     /// VideoViewerWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : GlassesWindow
+    public partial class MainWindow : FamilWindow
     {
         VideoWindowViewModel ViewModel => this.DataContext as VideoWindowViewModel;
 

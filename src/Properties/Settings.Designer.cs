@@ -25,7 +25,7 @@ namespace Zhai.VideoView.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(" ZDY \' VIDEO")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ZDY \' VIDEO")]
         public string AppName {
             get {
                 return ((string)(this["AppName"]));
@@ -46,13 +46,13 @@ namespace Zhai.VideoView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsWindowTransparency {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsWindowDarked {
             get {
-                return ((bool)(this["IsWindowTransparency"]));
+                return ((bool)(this["IsWindowDarked"]));
             }
             set {
-                this["IsWindowTransparency"] = value;
+                this["IsWindowDarked"] = value;
             }
         }
         
