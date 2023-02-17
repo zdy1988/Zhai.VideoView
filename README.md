@@ -1,6 +1,6 @@
 # ZHAI VIDEO VIEW
 
-![favicon](/src/favicon.ico)
+![favicon](/src/favicon2.ico)
 
 I need a beautiful and practical video player, so I wrote it...
 
