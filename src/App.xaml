@@ -20,6 +20,35 @@
                 </GradientStopCollection>
             </LinearGradientBrush>
 
+            <Style TargetType="{x:Type Border}" x:Key="HorizontalLinearGradientBorder">
+                <Style.Setters>
+                    <Setter Property="Height" Value="1"/>
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <LinearGradientBrush>
+                                <GradientStop Color="#00666666" Offset="0"/>
+                                <GradientStop Color="#E6666666" Offset="0.5"/>
+                                <GradientStop Color="#00666666" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Style.Setters>
+            </Style>
+            <Style TargetType="{x:Type Border}" x:Key="VerticalLinearGradientBorder">
+                <Style.Setters>
+                    <Setter Property="Width" Value="1"/>
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#00666666" Offset="0"/>
+                                <GradientStop Color="#E6666666" Offset="0.5"/>
+                                <GradientStop Color="#00666666" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Style.Setters>
+            </Style>
+
             <local:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
         </ResourceDictionary>
     </Application.Resources>

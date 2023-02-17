@@ -9,6 +9,8 @@ using System.Windows.Input;
 using Zhai.Famil.Controls;
 using Zhai.PictureView;
 using System.Linq;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace Zhai.VideoView
 {
@@ -23,11 +25,125 @@ namespace Zhai.VideoView
         {
             InitializeComponent();
 
+            InitializeMediaControl();
+
+            InitializeMouseMoveTimer();
+
             Loaded += MainWindow_Loaded;
 
             ViewModel.CurrentVideoChanged += ViewModel_CurrentVideoChanged;
 
             this.PreviewKeyDown += MainWindow_PreviewKeyDown;
+        }
+
+        private Storyboard HideControllerAnimation => FindResource("HideControlOpacity") as Storyboard;
+        private Storyboard ShowControllerAnimation => FindResource("ShowControlOpacity") as Storyboard;
+
+        private DateTime LastMouseMoveTime;
+        private Point LastMousePosition;
+        private DispatcherTimer MouseMoveTimer;
+        private bool IsControllerHideCompleted;
+
+        private void InitializeMediaControl()
+        {
+            App.ViewModelLocator.VideoWindow.VideoOpened += (sender, e) =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    if (App.ViewModelLocator.VideoWindow.MediaPlayer != null)
+                    {
+                        this.VideoViewer.MediaPlayer = App.ViewModelLocator.VideoWindow.MediaPlayer;
+                    }
+                });
+            };
+
+            LastMouseMoveTime = DateTime.UtcNow;
+
+            VideoViewerContorl.MouseMove += (s, e) =>
+            {
+                var currentPosition = e.GetPosition(this.VideoViewer);
+                if (Math.Abs(currentPosition.X - LastMousePosition.X) > double.Epsilon ||
+                    Math.Abs(currentPosition.Y - LastMousePosition.Y) > double.Epsilon)
+                    LastMouseMoveTime = DateTime.UtcNow;
+
+                LastMousePosition = currentPosition;
+            };
+
+            VideoViewerContorl.MouseLeave += (s, e) =>
+            {
+                LastMouseMoveTime = DateTime.UtcNow.Subtract(TimeSpan.FromSeconds(10));
+            };
+
+            VideoViewerContorl.AllowDrop = true;
+
+            VideoViewerContorl.Drop += (s, e) =>
+            {
+                string fileName = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+
+                if (!string.IsNullOrWhiteSpace(fileName) && VideoSupport.IsSupported(fileName))
+                {
+
+                    ViewModel.OpenVideo(fileName);
+                }
+            };
+
+            VideoViewerContorl.DragEnter += (s, e) =>
+            {
+                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                    e.Effects = DragDropEffects.Link;
+                }
+                else
+                {
+                    e.Effects = DragDropEffects.None;
+                }
+            };
+
+
+            ControllerPanelViewBox.MouseLeftButtonDown += (s, e) => e.Handled = true;
+        }
+
+        private void InitializeMouseMoveTimer()
+        {
+            Storyboard.SetTarget(HideControllerAnimation, ControllerPanel);
+            Storyboard.SetTarget(ShowControllerAnimation, ControllerPanel);
+
+            HideControllerAnimation.Completed += (es, ee) =>
+            {
+                ControllerPanel.Visibility = Visibility.Hidden;
+                IsControllerHideCompleted = true;
+            };
+
+            ShowControllerAnimation.Completed += (es, ee) =>
+            {
+                IsControllerHideCompleted = false;
+            };
+
+            MouseMoveTimer = new DispatcherTimer(DispatcherPriority.Background)
+            {
+                Interval = TimeSpan.FromMilliseconds(150),
+                IsEnabled = true
+            };
+
+            MouseMoveTimer.Tick += (s, e) =>
+            {
+                var elapsedSinceMouseMove = DateTime.UtcNow.Subtract(LastMouseMoveTime);
+                if (elapsedSinceMouseMove.TotalMilliseconds >= 3000 && App.ViewModelLocator.VideoWindow.IsOpened && ControllerPanel.IsMouseOver == false)
+                {
+                    if (IsControllerHideCompleted) return;
+                    Cursor = Cursors.None;
+                    HideControllerAnimation?.Begin();
+                    IsControllerHideCompleted = false;
+                }
+                else
+                {
+                    Cursor = Cursors.Arrow;
+                    ControllerPanel.Visibility = Visibility.Visible;
+                    ShowControllerAnimation?.Begin();
+                }
+            };
+
+            MouseMoveTimer.Start();
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -36,48 +152,19 @@ namespace Zhai.VideoView
 
             if (arg != null)
             {
-                await OpenVideo(arg.ToString());
+                await ViewModel.OpenVideo(arg.ToString());
             }
         }
-
-        public async Task OpenVideo(DirectoryInfo dir, string filename = null, List<DirectoryInfo> borthers = null)
-        {
-            var newFolder = new Folder(dir, borthers);
-
-            if (newFolder.IsAccessed)
-            {
-                var oldFolder = ViewModel.Folder;
-
-                ViewModel.Folder = newFolder;
-                await ViewModel.Folder.LoadAsync();
-                ViewModel.IsVideoCountMoreThanOne = ViewModel.Folder?.Count > 1;
-                ViewModel.CurrentVideo = (filename == null ? ViewModel.Folder : ViewModel.Folder.Where(t => t.VideoPath == filename)).FirstOrDefault();
-
-                ThreadPool.QueueUserWorkItem(_ => this.Dispatcher.Invoke(() => oldFolder?.Cleanup()));
-
-                ViewModel.IsShowVideoListView = ViewModel.Folder != null && ViewModel.Folder.Count > 1;
-            }
-            else
-            {
-                var box = new Zhai.Famil.Dialogs.MessageBox(this, ($"软件对路径：“{dir.FullName}”没有访问权限！"));
-                box.Show();
-            }
-        }
-
-        public Task OpenVideo(string filename)
-            => OpenVideo(Directory.GetParent(filename), filename);
 
         private void ViewModel_CurrentVideoChanged(object sender, Video video)
         {
             if (video != null)
             {
-                this.VideoViewElement.OpenVideo(video.VideoPath);
+                ViewModel.TryOpenVideo(video.VideoPath);
 
-                //PictureList.ScrollIntoView(picture);
+                VideoList.ScrollIntoView(video);
             }
         }
-
-
 
         private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -96,9 +183,9 @@ namespace Zhai.VideoView
             else if (e.Key == Key.Space)
             {
                 // Toggle Play
-                if (App.ViewModelLocator.VideoElement.IsOpened)
+                if (App.ViewModelLocator.VideoWindow.IsOpened)
                 {
-                    App.ViewModelLocator.VideoElement.ToggledPlayVideo();
+                    App.ViewModelLocator.VideoWindow.ToggledPlayVideo();
                 }
             }
         }

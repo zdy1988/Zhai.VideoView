@@ -16,11 +16,11 @@ namespace Zhai.VideoView
     /// <summary>
     /// ControllerPanelControl.xaml 的交互逻辑
     /// </summary>
-    public partial class VideoViewElementControllerPanel : UserControl
+    public partial class VideoWindowControllerPanel : UserControl
     {
-        private VideoElementViewModel ViewModel => DataContext as VideoElementViewModel;
+        VideoWindowViewModel ViewModel => this.DataContext as VideoWindowViewModel;
 
-        public VideoViewElementControllerPanel()
+        public VideoWindowControllerPanel()
         {
             InitializeComponent();
 

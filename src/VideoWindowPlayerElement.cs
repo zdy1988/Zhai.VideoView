@@ -2,40 +2,15 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
 using System.Threading;
-using System.Windows.Controls;
-using System.Windows.Data;
 using Zhai.Famil.Common.Mvvm;
 using Zhai.Famil.Common.Mvvm.Command;
 
 namespace Zhai.VideoView
 {
-    internal partial class VideoElementViewModel : ViewModelBase
+    internal partial class VideoWindowViewModel : ViewModelBase
     {
-        public VideoElementViewModel()
-        {
-            try
-            {
-                VideoSourceProvider = new VideoSourceProvider();
-
-                VideoSourceProvider.CreatePlayer();
-
-                LoadPlayer();
-
-                Volume = 75;
-            }
-            catch (Exception ex)
-            {
-#if DEBUG
-                Debug.WriteLine("VideoViewer: Initialize Error ...", ex);
-#endif
-            }
-        }
-
         public VideoSourceProvider VideoSourceProvider { get; private set; }
 
         public LibVLC LibVLC => VideoSourceProvider.LibVLC;
@@ -265,6 +240,26 @@ namespace Zhai.VideoView
 
         #region Methods
 
+        public void InitPlayer()
+        {
+            try
+            {
+                VideoSourceProvider = new VideoSourceProvider();
+
+                VideoSourceProvider.CreatePlayer();
+
+                LoadPlayer();
+
+                Volume = 75;
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Debug.WriteLine("VideoViewer: Initialize Error ...", ex);
+#endif
+            }
+        }
+
         public void LoadPlayer()
         {
             this.RegisteredEvents(this.LibVLC, this.MediaPlayer);
@@ -405,12 +400,6 @@ namespace Zhai.VideoView
 
         #region Commands
 
-        public RelayCommand<string> ExecuteOpenCommand => new Lazy<RelayCommand<string>>(() => new RelayCommand<string>(uriString =>
-        {
-            TryOpenVideo(uriString);
-
-        })).Value;
-
         public RelayCommand ExecutePlayCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             if (IsOpened)
@@ -425,7 +414,7 @@ namespace Zhai.VideoView
                 };
 
                 if (dialog.ShowDialog() is true)
-                    TryOpenVideo(dialog.FileName);
+                    OpenVideo(dialog.FileName);
             }
 
         })).Value;
@@ -481,7 +470,7 @@ namespace Zhai.VideoView
 
         #region Events
 
-        public event EventHandler<VideoElementViewModel> VideoOpened;
+        public event EventHandler<VideoWindowViewModel> VideoOpened;
 
         protected virtual void OnVideoOpened()
         {

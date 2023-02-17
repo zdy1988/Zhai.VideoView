@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Zhai.VideoView.VideoViewElementControllerPanel"
+﻿<UserControl x:Class="Zhai.VideoView.VideoWindowControllerPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -18,7 +18,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Name="Controls" Background="Transparent" ClipToBounds="True">
+    <Grid Background="Transparent" ClipToBounds="True">
         <Canvas IsHitTestVisible="False" Background="{StaticResource ShadedBackgroundBrush}" MouseDown="Canvas_MouseDown"/>
 
         <Grid VerticalAlignment="Bottom" Margin="0 24 0 6">
