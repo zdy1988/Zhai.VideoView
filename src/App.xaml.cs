@@ -15,8 +15,14 @@ namespace Zhai.VideoView
     /// </summary>
     public partial class App : Application
     {
+        internal static ViewModelLocator ViewModelLocator { get; private set; }
+
+        internal static MainWindow VideoWindow => App.Current.MainWindow as MainWindow;
+
         protected override void OnStartup(StartupEventArgs e)
         {
+            App.ViewModelLocator = FindResource("Locator") as ViewModelLocator;
+
             if (e != null && e.Args.Length == 1)
             {
                 var filename = e.Args[0];
@@ -31,10 +37,6 @@ namespace Zhai.VideoView
 
             base.OnStartup(e);
         }
-
-        internal static MainWindow VideoWindow => App.Current.MainWindow as MainWindow;
-
-        internal static VideoElementViewModel VideoElementViewModel => VideoWindow.DataContext as VideoElementViewModel;
 
         private static void HandleException(Action<object, UnhandledExceptionEventArgs> centralizedExceptionHander = null)
         {

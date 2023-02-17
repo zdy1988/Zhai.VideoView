@@ -10,7 +10,7 @@
         Theme="Dark"
         IsTopmostButtonEnabled="True"
         IsTransparencyButtonEnabled="True"
-        DataContext="{Binding VideoElement, Source={StaticResource Locator}}"
+        DataContext="{Binding VideoWindow, Source={StaticResource Locator}}"
         WindowStartupLocation="CenterScreen"
         Height="720" Width="960"
         MinHeight="450" MinWidth="600"

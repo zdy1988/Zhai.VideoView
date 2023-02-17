@@ -8,6 +8,8 @@ namespace Zhai.VideoView
 {
     internal class ViewModelLocator
     {
+        public VideoWindowViewModel VideoWindow { get; } = new VideoWindowViewModel();
+
         public VideoElementViewModel VideoElement { get; } = new VideoElementViewModel();
     }
 }

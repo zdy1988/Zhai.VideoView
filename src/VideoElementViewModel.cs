@@ -14,7 +14,7 @@ using Zhai.Famil.Common.Mvvm.Command;
 
 namespace Zhai.VideoView
 {
-    public partial class VideoElementViewModel : ViewModelBase
+    internal partial class VideoElementViewModel : ViewModelBase
     {
         public VideoElementViewModel()
         {
@@ -201,7 +201,7 @@ namespace Zhai.VideoView
 
             this.CurrentMedia = this.MediaPlayer.Media;
 
-            this.OnMediaOpened();
+            this.OnVideoOpened();
         }
 
         private void MediaPlayer_Playing(object sender, EventArgs e)
@@ -294,7 +294,7 @@ namespace Zhai.VideoView
             this.MediaPlayer.SetRate(1);
         }
 
-        public bool TryOpenMedia(string uriString)
+        public bool TryOpenVideo(string uriString)
         {
             if (this.IsLoading || string.IsNullOrWhiteSpace(uriString) || !VideoSupport.IsSupported(uriString))
                 return false;
@@ -319,7 +319,7 @@ namespace Zhai.VideoView
             }
         }
 
-        public bool TryPlayMedia()
+        public bool TryPlayVideo()
         {
             if (this.MediaPlayer == null) return false;
 
@@ -340,7 +340,7 @@ namespace Zhai.VideoView
             return false;
         }
 
-        public bool TryPausMedia()
+        public bool TryPausVideo()
         {
             if (IsOpened && this.MediaPlayer.IsPlaying)
             {
@@ -354,7 +354,7 @@ namespace Zhai.VideoView
             return false;
         }
 
-        public void ToggledPlayMedia()
+        public void ToggledPlayVideo()
         {
             if (IsOpened)
             {
@@ -407,7 +407,7 @@ namespace Zhai.VideoView
 
         public RelayCommand<string> ExecuteOpenCommand => new Lazy<RelayCommand<string>>(() => new RelayCommand<string>(uriString =>
         {
-            TryOpenMedia(uriString);
+            TryOpenVideo(uriString);
 
         })).Value;
 
@@ -415,7 +415,7 @@ namespace Zhai.VideoView
         {
             if (IsOpened)
             {
-                this.TryPlayMedia();
+                this.TryPlayVideo();
             }
             else
             {
@@ -425,14 +425,14 @@ namespace Zhai.VideoView
                 };
 
                 if (dialog.ShowDialog() is true)
-                    TryOpenMedia(dialog.FileName);
+                    TryOpenVideo(dialog.FileName);
             }
 
         })).Value;
 
         public RelayCommand ExecutePauseCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
-            this.TryPausMedia();
+            this.TryPausVideo();
 
         })).Value;
 
@@ -481,11 +481,11 @@ namespace Zhai.VideoView
 
         #region Events
 
-        public event EventHandler<VideoElementViewModel> MediaOpened;
+        public event EventHandler<VideoElementViewModel> VideoOpened;
 
-        protected virtual void OnMediaOpened()
+        protected virtual void OnVideoOpened()
         {
-            MediaOpened?.Invoke(this, this);
+            VideoOpened?.Invoke(this, this);
         }
 
         #endregion

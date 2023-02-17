@@ -31,13 +31,13 @@ namespace Zhai.VideoView
 
         private void InitializeMediaControl()
         {
-            App.VideoElementViewModel.MediaOpened += (sender, e) =>
+            App.ViewModelLocator.VideoElement.VideoOpened += (sender, e) =>
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    if (App.VideoElementViewModel.MediaPlayer != null)
+                    if (App.ViewModelLocator.VideoElement.MediaPlayer != null)
                     {
-                        this.VideoViewer.MediaPlayer = App.VideoElementViewModel.MediaPlayer;
+                        this.VideoViewer.MediaPlayer = App.ViewModelLocator.VideoElement.MediaPlayer;
                     }
                 });
             };
@@ -70,7 +70,7 @@ namespace Zhai.VideoView
                 if (!string.IsNullOrWhiteSpace(fileName) && VideoSupport.IsSupported(fileName))
                 {
 
-                    this.OpenMedia(fileName);
+                    this.OpenVideo(fileName);
                 }
             };
 
@@ -117,7 +117,7 @@ namespace Zhai.VideoView
             MouseMoveTimer.Tick += (s, e) =>
             {
                 var elapsedSinceMouseMove = DateTime.UtcNow.Subtract(LastMouseMoveTime);
-                if (elapsedSinceMouseMove.TotalMilliseconds >= 3000 && App.VideoElementViewModel.IsOpened && ControllerPanel.IsMouseOver == false)
+                if (elapsedSinceMouseMove.TotalMilliseconds >= 3000 && App.ViewModelLocator.VideoElement.IsOpened && ControllerPanel.IsMouseOver == false)
                 {
                     if (IsControllerHideCompleted) return;
                     Cursor = Cursors.None;
@@ -138,15 +138,15 @@ namespace Zhai.VideoView
 
         #region Methods
 
-        public void OpenMedia(string urlString) => App.VideoElementViewModel.TryOpenMedia(urlString);
+        public void OpenVideo(string urlString) => App.ViewModelLocator.VideoElement.TryOpenVideo(urlString);
 
-        public void Play() => App.VideoElementViewModel?.TryPlayMedia();
+        public void Play() => App.ViewModelLocator.VideoElement?.TryPlayVideo();
 
-        public void Pause() => App.VideoElementViewModel?.TryPausMedia();
+        public void Pause() => App.ViewModelLocator.VideoElement?.TryPausVideo();
 
-        public void ToggledPlay() => App.VideoElementViewModel?.ToggledPlayMedia();
+        public void ToggledPlay() => App.ViewModelLocator.VideoElement?.ToggledPlayVideo();
 
-        public void Dispose() => ThreadPool.QueueUserWorkItem(_ => this.Dispatcher.Invoke(() => App.VideoElementViewModel?.DisposePlayer()));
+        public void Dispose() => ThreadPool.QueueUserWorkItem(_ => this.Dispatcher.Invoke(() => App.ViewModelLocator.VideoElement?.DisposePlayer()));
 
         #endregion
 
@@ -164,7 +164,7 @@ namespace Zhai.VideoView
         {
             if (d is VideoViewElement videoViewer && e.NewValue is string localPath)
             {
-                videoViewer.OpenMedia(localPath);
+                videoViewer.OpenVideo(localPath);
             }
         }
 
