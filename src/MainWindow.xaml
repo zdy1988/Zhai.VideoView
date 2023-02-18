@@ -51,8 +51,69 @@
         </DockPanel>
     </ZDY:GlassesWindow.TitleBarContent>
     <Grid>
-        <vlc:VideoView x:Name="VideoViewer" Background="Transparent" BorderThickness="0">
+        <ZDY:Drawer IsOverlayed="False" IsRightDrawerOpen="True">
+            <ZDY:Drawer.RightDrawerContent>
+                <Border Width="220" Background="#80000000">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="14" Direction="270" Opacity=".42" RenderingBias="Performance" ShadowDepth="4.5" Color="#000000"/>
+                    </Border.Effect>
+                    <Grid>
+                        <ZDY:ListBox x:Name="FolderList" Margin="8 8 8 -6"
+                                     ItemsSource="{Binding Folder}" Cursor="Hand"
+                                     VirtualizingPanel.ScrollUnit="Pixel"
+                                     VirtualizingPanel.VirtualizationMode="Standard"
+                                     VirtualizingPanel.IsVirtualizing="True"
+                                     VirtualizingPanel.IsContainerVirtualizable="True"
+                                     VirtualizingPanel.CacheLengthUnit="Item"
+                                     ScrollViewer.CanContentScroll="True"
+                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                                     ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal"
+                                     ZDY:ScrollViewerExtension.IsPenetrating="True">
+                            <ZDY:ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel IsItemsHost="True"/>
+                                </ItemsPanelTemplate>
+                            </ZDY:ListBox.ItemsPanel>
+                            <ZDY:ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                <DockPanel>
+                                                    <Border DockPanel.Dock="Left" CornerRadius="4" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
+                                                            Width="84" Height="56" Margin="1" Padding="1"
+                                                            BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
+                                                            SnapsToDevicePixels="true">
+                                                        <Image Stretch="UniformToFill" Source="{Binding ThumbSource}" ToolTip="{Binding Name}" VerticalAlignment="Center"
+                                                                       XamlServices:VideoService.Video="{Binding}"/>
+                                                    </Border>
+                                                    <StackPanel DockPanel.Dock="Right">
+                                                        <TextBlock Text="{Binding Name}"/>
+                                                    </StackPanel>
+                                                </DockPanel>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ZDY:ListBox.ItemContainerStyle>
+                        </ZDY:ListBox>
+                    </Grid>
+                </Border>
+            </ZDY:Drawer.RightDrawerContent>
             <Grid x:Name="VideoViewerContorl" Background="#01000000">
+                <Image x:Name="VideoViewer" Source="{Binding VideoSourceProvider.VideoSource, Mode=OneWay}" ClipToBounds="True"/>
+
                 <ZDY:Loading x:Name="LoadingBox" Theme="Circle" Foreground="{x:Static SystemColors.HighlightBrush}" Width="48" Height="48" Visibility="{Binding IsLoading, Converter={ZDY:BoolToVisibilityConverter}}"/>
 
                 <Border x:Name="PlayButtonViewBox" Visibility="{Binding IsLoading, Converter={ZDY:BoolToInverseVisibilityConverter}}"
@@ -61,7 +122,7 @@
                                     Visibility="{Binding IsOpened,Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
                 </Border>
 
-                <Border x:Name="ControllerPanelViewBox" Visibility="{Binding IsOpened, Converter={ZDY:BoolToVisibilityConverter}}" VerticalAlignment="Bottom">
+                <Border x:Name="ControllerPanelViewBox" VerticalAlignment="Bottom">
                     <local:VideoWindowControllerPanel x:Name="ControllerPanel"/>
                 </Border>
 
@@ -127,6 +188,6 @@
 
                 <ZDY:Hint Text="{Binding NotificationMessage}" FontWeight="Normal" CornerRadius="4" Margin="0 -160 0 0" Background="{x:Static SystemColors.HighlightBrush}" Duration="0:0:5"/>
             </Grid>
-        </vlc:VideoView>
+        </ZDY:Drawer>
     </Grid>
 </ZDY:FamilWindow>

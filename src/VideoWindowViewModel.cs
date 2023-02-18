@@ -81,8 +81,6 @@ namespace Zhai.VideoView
                 CurrentVideo = (filename == null ? Folder : Folder.Where(t => t.VideoPath == filename)).FirstOrDefault();
 
                 ThreadPool.QueueUserWorkItem(_ => ApplicationDispatcher.InvokeOnUIThread(() => oldFolder?.Cleanup()));
-
-                IsShowVideoListView = Folder != null && Folder.Count > 1;
             }
             else
             {
@@ -112,7 +110,7 @@ namespace Zhai.VideoView
 
         public RelayCommand ExecutePlayCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
-            if (IsOpened)
+            if (IsOpened || CurrentVideo != null)
             {
                 this.TryPlayVideo();
             }
@@ -127,7 +125,7 @@ namespace Zhai.VideoView
         {
             this.TryPausVideo();
 
-        })).Value;
+        }, () => CurrentVideo != null)).Value;
 
         public RelayCommand ExecuteStopCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
@@ -151,7 +149,7 @@ namespace Zhai.VideoView
                 this.Rate = rate;
             }
 
-        })).Value;
+        }, () => CurrentVideo != null)).Value;
 
         public RelayCommand ExecuteRateDownCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
@@ -162,13 +160,13 @@ namespace Zhai.VideoView
                 this.Rate = rate;
             }
 
-        })).Value;
+        }, () => CurrentVideo != null)).Value;
 
         public RelayCommand<float> ExecuteSetRateCommand => new Lazy<RelayCommand<float>>(() => new RelayCommand<float>(rate =>
         {
             this.Rate = rate;
 
-        })).Value;
+        }, rate => CurrentVideo != null)).Value;
 
         public RelayCommand ExecuteNextCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
         {
@@ -203,7 +201,7 @@ namespace Zhai.VideoView
                 CurrentVideoIndex = 0;
             }
 
-        })).Value;
+        }, () => Folder != null && Folder.Any() && IsVideoCountMoreThanOne)).Value;
 
         public RelayCommand ExecutePrevCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
         {
@@ -238,7 +236,7 @@ namespace Zhai.VideoView
                 CurrentVideoIndex = Folder.Count - 1;
             }
 
-        })).Value;
+        }, () => Folder != null && Folder.Any() && IsVideoCountMoreThanOne)).Value;
 
         #endregion
 

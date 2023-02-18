@@ -244,7 +244,7 @@ namespace Zhai.VideoView
             {
                 VideoSourceProvider = new VideoSourceProvider();
 
-                VideoSourceProvider.CreatePlayer();
+                VideoSourceProvider.CreateVideoSourcePlayer();
 
                 LoadPlayer();
 

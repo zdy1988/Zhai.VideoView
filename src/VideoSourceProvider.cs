@@ -170,8 +170,6 @@ namespace Zhai.VideoView
         /// <returns>The number of buffers allocated</returns>
         private uint VideoFormat(ref IntPtr userdata, IntPtr chroma, ref uint width, ref uint height, ref uint pitches, ref uint lines)
         {
-
-
             var pixelFormat = IsAlphaChannelEnabled ? PixelFormats.Bgra32 : PixelFormats.Bgr32;
             FourCCConverter.ToFourCC("RV32", chroma);
 
@@ -206,10 +204,10 @@ namespace Zhai.VideoView
 
             var args = new
             {
-                width = width,
-                height = height,
-                pixelFormat = pixelFormat,
-                pitches = pitches
+                width,
+                height,
+                pixelFormat,
+                pitches
             };
 
             Application.Current.Dispatcher.Invoke((Action)(() =>

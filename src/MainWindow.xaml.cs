@@ -60,10 +60,12 @@ namespace Zhai.VideoView
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    if (App.ViewModelLocator.VideoWindow.MediaPlayer != null)
-                    {
-                        this.VideoViewer.MediaPlayer = App.ViewModelLocator.VideoWindow.MediaPlayer;
-                    }
+                    //if (App.ViewModelLocator.VideoWindow.MediaPlayer != null)
+                    //{
+                    //    this.VideoViewer.MediaPlayer = App.ViewModelLocator.VideoWindow.MediaPlayer;
+                    //}
+
+                    //ViewModel.IsShowVideoListView = ViewModel.Folder != null && ViewModel.Folder.Count > 1;
                 });
             };
 
