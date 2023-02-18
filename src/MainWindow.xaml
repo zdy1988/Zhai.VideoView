@@ -172,7 +172,7 @@
                                                                     BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
                                                                     SnapsToDevicePixels="true">
                                                                 <Grid>
-                                                                    <Image Stretch="UniformToFill" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
+                                                                    <Image Stretch="UniformToFill" Source="{Binding ThumbSource}" ToolTip="{Binding Name}" VerticalAlignment="Center"
                                                                            XamlServices:VideoThumbService.Video="{Binding}"/>
                                                                     <Border Background="{StaticResource Zhai.Famil.SelectionBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="3 1" CornerRadius="2" Margin="4">
                                                                         <TextBlock Text="{Binding Duration, Converter={Converters:TimeSpanFromDurationConverter}}" FontSize="11"/>
