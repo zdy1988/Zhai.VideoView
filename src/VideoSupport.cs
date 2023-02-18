@@ -56,5 +56,7 @@ Others ({Others.ToFilter()})|{Others.ToFilter()}|
 All Files (*.*)|*.*";
 
         internal static bool IsSupported(string filename) => All.Contains(Path.GetExtension(filename).ToLower());
+
+        internal static readonly Func<FileInfo, bool> VideoSupportExpression = file => (file.Attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.Temporary)) == 0 && VideoSupport.IsSupported(file.FullName);
     }
 }

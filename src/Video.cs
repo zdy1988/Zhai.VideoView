@@ -1,38 +1,29 @@
-﻿using System;
+﻿using Microsoft.WindowsAPICodePack.Shell;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using Zhai.Famil.Common.Mvvm;
 
 namespace Zhai.VideoView
 {
-    internal class Video : ViewModelBase
+    internal class Video : VideoThumbBase
     {
         public string Name { get; }
 
         public long Size { get; }
 
+        public long Duration { get; }
+
         public String VideoPath { get; }
 
-        private BitmapSource thumbSource = VideoThumbStateResources.ImageLoading;
-        public BitmapSource ThumbSource
-        {
-            get => thumbSource;
-            set => Set(() => ThumbSource, ref thumbSource, value);
-        }
-
-        private VideoThumbState thumbState = VideoThumbState.Failed;
-        public VideoThumbState ThumbState
-        {
-            get => thumbState;
-            set => Set(() => ThumbState, ref thumbState, value);
-        }
-
         public Video(string filename)
+            : base(filename)
         {
             var file = new FileInfo(filename);
 
@@ -40,61 +31,22 @@ namespace Zhai.VideoView
 
             Size = file.Length;
 
+            Duration = GetDuration(filename);
+
             VideoPath = filename;
         }
 
-        public void DrawThumb()
-        {
-            if (ThumbState != VideoThumbState.Failed)
-                return;
-
-            ThumbState = VideoThumbState.Loading;
-            ThumbSource = VideoThumbStateResources.ImageLoading;
-
-            if (!string.IsNullOrWhiteSpace(VideoPath))
-            {
-                try
-                {
-                    var thumbSource = GetWindowsThumbnail(VideoPath);
-
-                    if (thumbSource != null)
-                    {
-                        ThumbSource = thumbSource;
-                        ThumbState = VideoThumbState.Loaded;
-                    }
-                    else
-                    {
-                        ThumbSource = VideoThumbStateResources.ImageFailed;
-                        ThumbState = VideoThumbState.Failed;
-                    }
-                }
-                catch
-                {
-                    ThumbSource = VideoThumbStateResources.ImageFailed;
-                    ThumbState = VideoThumbState.Failed;
-                }
-            }
-        }
-
-        private static BitmapSource GetWindowsThumbnail(string filename)
+        private long GetDuration(string filename)
         {
             try
             {
-                var thumb = Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(filename).Thumbnail.BitmapSource;
+                ShellObject obj = ShellObject.FromParsingName(filename);
 
-                if (!thumb.IsFrozen)
-                {
-                    thumb.Freeze();
-                }
-
-                return thumb;
+                return (long)obj.Properties.System.Media.Duration.Value.Value;
             }
-            catch (Exception ex)
+            catch
             {
-#if DEBUG
-                Debug.WriteLine($"{nameof(Video)} : GetWindowsThumbnail returned {filename} null  : {ex.Message}");
-#endif
-                return null;
+                return 0;
             }
         }
     }

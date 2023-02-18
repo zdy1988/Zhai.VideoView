@@ -51,25 +51,24 @@
         </DockPanel>
     </ZDY:GlassesWindow.TitleBarContent>
     <Grid>
-        <ZDY:Drawer IsOverlayed="False" IsRightDrawerOpen="True">
+        <ZDY:Drawer IsOverlayed="False" IsRightDrawerOpen="{Binding IsShowFolderBorthersView}">
             <ZDY:Drawer.RightDrawerContent>
-                <Border Width="220" Background="#80000000">
-                    <Border.Effect>
-                        <DropShadowEffect BlurRadius="14" Direction="270" Opacity=".42" RenderingBias="Performance" ShadowDepth="4.5" Color="#000000"/>
-                    </Border.Effect>
+                <Border Width="220" Margin="24 24 8 24">
                     <Grid>
-                        <ZDY:ListBox x:Name="FolderList" Margin="8 8 8 -6"
-                                     ItemsSource="{Binding Folder}" Cursor="Hand"
+                        <Border HorizontalAlignment="Left" Margin="-12 0 0 0" Style="{StaticResource VerticalLinearGradientBorder}"/>
+                        <ZDY:ListBox x:Name="FolderList"
+                                     ItemsSource="{Binding Folder.Borthers}" Cursor="Hand"
                                      VirtualizingPanel.ScrollUnit="Pixel"
                                      VirtualizingPanel.VirtualizationMode="Standard"
                                      VirtualizingPanel.IsVirtualizing="True"
                                      VirtualizingPanel.IsContainerVirtualizable="True"
                                      VirtualizingPanel.CacheLengthUnit="Item"
                                      ScrollViewer.CanContentScroll="True"
-                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                     ScrollViewer.HorizontalScrollBarVisibility="Visible"
-                                     ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal"
-                                     ZDY:ScrollViewerExtension.IsPenetrating="True">
+                                     ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ZDY:ScrollViewerExtension.MouseWheelOrientation="Vertical"
+                                     ZDY:ScrollViewerExtension.IsPenetrating="True"
+                                     SelectedItem="{Binding CurrentFolder}">
                             <ZDY:ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <VirtualizingStackPanel IsItemsHost="True"/>
@@ -79,27 +78,33 @@
                                 <Style TargetType="{x:Type ListBoxItem}">
                                     <Setter Property="BorderThickness" Value="2"/>
                                     <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Background" Value="Transparent"/>
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                <DockPanel>
-                                                    <Border DockPanel.Dock="Left" CornerRadius="4" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
+                                                <DockPanel Background="{TemplateBinding Background}">
+                                                    <Border DockPanel.Dock="Left" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
                                                             Width="84" Height="56" Margin="1" Padding="1"
                                                             BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
                                                             SnapsToDevicePixels="true">
-                                                        <Image Stretch="UniformToFill" Source="{Binding ThumbSource}" ToolTip="{Binding Name}" VerticalAlignment="Center"
-                                                                       XamlServices:VideoService.Video="{Binding}"/>
+                                                        <Image Stretch="UniformToFill" ToolTip="{Binding Name}" VerticalAlignment="Center"
+                                                                       XamlServices:VideoDirtoryThumbService.VideoDirectory="{Binding}"/>
                                                     </Border>
                                                     <StackPanel DockPanel.Dock="Right">
-                                                        <TextBlock Text="{Binding Name}"/>
+                                                        <TextBlock Text="{Binding Name}" Margin="4 2 0 0" MaxHeight="32" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+                                                        <Border Background="{StaticResource Zhai.Famil.SelectionBrush}" HorizontalAlignment="Left" Padding="3 1" CornerRadius="2" Margin="4 4 0 0">
+                                                            <TextBlock Text="{Binding Converter={Converters:FolderChildNumberConverter}, StringFormat={}{0}个视频}" FontSize="11"/>
+                                                        </Border>
                                                     </StackPanel>
                                                 </DockPanel>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                        <Setter Property="Background" Value="{StaticResource Zhai.Famil.SelectionActivedBrush}"/>
                                                     </Trigger>
                                                     <Trigger Property="IsSelected" Value="True">
                                                         <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                        <Setter Property="Background" Value="{StaticResource Zhai.Famil.SelectionActivedBrush}"/>
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -112,6 +117,8 @@
                 </Border>
             </ZDY:Drawer.RightDrawerContent>
             <Grid x:Name="VideoViewerContorl" Background="#01000000">
+                <Border VerticalAlignment="Top" Margin="0 -1 0 0" Style="{StaticResource HorizontalLinearGradientBorder}"/>
+                
                 <Image x:Name="VideoViewer" Source="{Binding VideoSourceProvider.VideoSource, Mode=OneWay}" ClipToBounds="True"/>
 
                 <ZDY:Loading x:Name="LoadingBox" Theme="Circle" Foreground="{x:Static SystemColors.HighlightBrush}" Width="48" Height="48" Visibility="{Binding IsLoading, Converter={ZDY:BoolToVisibilityConverter}}"/>
@@ -128,10 +135,11 @@
 
                 <ZDY:Drawer IsOverlayed="False" IsBottomDrawerOpen="{Binding IsShowVideoListView}" Margin="0 0 0 88">
                     <ZDY:Drawer.BottomDrawerContent>
-                        <Border Visibility="{Binding CurrentVideo, Converter={ZDY:NullableToVisibilityConverter}}" Opacity="{Binding Source={x:Reference ControllerPanel}, Path=Opacity}">
+                        <Border Height="70" Visibility="{Binding CurrentVideo, Converter={ZDY:NullableToVisibilityConverter}}" Opacity="{Binding Source={x:Reference ControllerPanel}, Path=Opacity}">
                             <Grid>
                                 <DockPanel HorizontalAlignment="Center" MaxWidth="888">
-                                    <ZDY:Button x:Name="GalleryButton" DockPanel.Dock="Right" Content="全部视频" Foreground="White" VerticalContentAlignment="Center" Background="Transparent"/>
+                                    <ZDY:Button DockPanel.Dock="Right" Content="{Binding IsShowFolderBorthersView, Converter={ZDY:BoolToStringToggledConverter}, ConverterParameter=更多视频-关闭更多}" VerticalContentAlignment="Center" Background="Transparent"
+                                                Command="{Binding ExecuteToggleFolderBorthersViewCommand}"/>
                                     <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource VerticalLinearGradientBorder}"/>
                                     <ZDY:ListBox x:Name="VideoList" Margin="8 8 8 -6"
                                                  ItemsSource="{Binding Folder}"
@@ -159,12 +167,17 @@
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                            <Border CornerRadius="4" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
-                                                            Width="75" Height="50" Margin="1" Padding="1"
-                                                            BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
-                                                            SnapsToDevicePixels="true">
-                                                                <Image Stretch="UniformToFill" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
-                                                                       XamlServices:VideoService.Video="{Binding}"/>
+                                                            <Border BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
+                                                                    Width="75" Height="50" Margin="1" Padding="1"
+                                                                    BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
+                                                                    SnapsToDevicePixels="true">
+                                                                <Grid>
+                                                                    <Image Stretch="UniformToFill" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
+                                                                           XamlServices:VideoThumbService.Video="{Binding}"/>
+                                                                    <Border Background="{StaticResource Zhai.Famil.SelectionBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="3 1" CornerRadius="2" Margin="4">
+                                                                        <TextBlock Text="{Binding Duration, Converter={Converters:TimeSpanFromDurationConverter}}" FontSize="11"/>
+                                                                    </Border>
+                                                                </Grid>
                                                             </Border>
                                                             <ControlTemplate.Triggers>
                                                                 <Trigger Property="IsMouseOver" Value="True">
@@ -187,6 +200,29 @@
                 </ZDY:Drawer>
 
                 <ZDY:Hint Text="{Binding NotificationMessage}" FontWeight="Normal" CornerRadius="4" Margin="0 -160 0 0" Background="{x:Static SystemColors.HighlightBrush}" Duration="0:0:5"/>
+
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsShowFolderBorthersView}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ThicknessAnimation Storyboard.TargetProperty="Margin" To="24 24 0 24" Duration="0:0:0.4"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ThicknessAnimation Storyboard.TargetProperty="Margin" To="0" Duration="0:0:0.4"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
             </Grid>
         </ZDY:Drawer>
     </Grid>

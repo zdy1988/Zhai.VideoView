@@ -82,14 +82,19 @@
 
                 <DockPanel Name="CenterControls" HorizontalAlignment="Center" Grid.Column="1">
                     <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Command="{Binding ExecuteOpenCommand}" Visibility="{Binding CurrentVideo, Converter={ZDY:NullableToVisibilityConverter}}"/>
-                    <ZDY:IconToggleButton x:Name="LoopingButton" CheckedIcon="Convertshape" CheckedToolTip="关闭循环" Icon="Convertshape" ToolTip="循环播放" IsChecked="{Binding IsLooping, Mode=TwoWay}" 
+                    <Grid>
+                        <ZDY:Badged Badge="循环中" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 -40 0 0" Panel.ZIndex="1"
+                                    Visibility="{Binding IsLooping, Mode=OneWay, Converter={ZDY:BoolToVisibilityConverter}}"
+                                    BadgeBackground="{StaticResource Zhai.Famil.ColorfulBrush}"/>
+                        <ZDY:IconToggleButton x:Name="LoopingButton" CheckedIcon="Convertshape" CheckedToolTip="关闭循环" Icon="Convertshape" ToolTip="循环播放" IsChecked="{Binding IsLooping, Mode=TwoWay}" 
                                           IsEnabled="{Binding CurrentVideo, Converter={ZDY:NullableToBoolConverter}}"/>
+                    </Grid>
                     <ZDY:IconButton x:Name="PrevButton" Icon="Previous" ToolTip="上一个" Command="{Binding ExecutePrevCommand}" Visibility="{Binding IsVideoCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
                     <ZDY:IconButton x:Name="PlayButton" Icon="Play2" ToolTip="播放" Command="{Binding ExecutePlayCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToVisibilityConverter}}"/>
                     <ZDY:IconButton x:Name="PauseButton" Icon="Pause" ToolTip="暂停" Command="{Binding ExecutePauseCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
                     <ZDY:IconButton x:Name="NextButton" Icon="Next" ToolTip="下一个" Command="{Binding ExecuteNextCommand}" Visibility="{Binding IsVideoCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
                     <Grid>
-                        <ZDY:Badged HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 -24 -24 0" BadgeBackground="{StaticResource Zhai.Famil.ColorfulBrush}">
+                        <ZDY:Badged HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 -40 -0 0" BadgeBackground="{StaticResource Zhai.Famil.ColorfulBrush}">
                             <ZDY:Badged.Badge>
                                 <TextBlock>
                                     <Run Text="×"/>

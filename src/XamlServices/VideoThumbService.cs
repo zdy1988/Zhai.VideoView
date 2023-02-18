@@ -9,9 +9,9 @@ using Zhai.Famil.Common.Threads;
 
 namespace Zhai.VideoView.XamlServices
 {
-    internal class VideoService
+    internal class VideoThumbService
     {
-        public static readonly DependencyProperty VideoProperty = DependencyProperty.RegisterAttached("Video", typeof(Video), typeof(VideoService), new PropertyMetadata(new PropertyChangedCallback(OnImageSourcePropertyChangedCallback)));
+        public static readonly DependencyProperty VideoProperty = DependencyProperty.RegisterAttached("Video", typeof(Video), typeof(VideoThumbService), new PropertyMetadata(new PropertyChangedCallback(OnImageSourcePropertyChangedCallback)));
         public static Video GetVideo(DependencyObject obj) => (Video)obj.GetValue(VideoProperty);
         public static void SetVideo(DependencyObject obj, object value) => obj.SetValue(VideoProperty, value);
 

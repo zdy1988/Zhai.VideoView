@@ -296,7 +296,7 @@ namespace Zhai.VideoView
             {
                 var media = new Media(this.LibVLC, new Uri(uriString));
 
-                this.MediaPlayer.Play(media);
+                ThreadPool.QueueUserWorkItem(_ => this.MediaPlayer.Play(media));
 
                 return true;
             }

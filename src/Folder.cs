@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Security.AccessControl;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 using Zhai.VideoView;
 
 namespace Zhai.PictureView
@@ -36,11 +34,9 @@ namespace Zhai.PictureView
         }
 
 
-        readonly Func<FileInfo, bool> PictureSupportExpression = file => (file.Attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.Temporary)) == 0 && VideoSupport.IsSupported(file.FullName);
-
         public async Task LoadAsync()
         {
-            var files = Current.EnumerateFiles().Where(PictureSupportExpression);
+            var files = Current.EnumerateFiles().Where(VideoSupport.VideoSupportExpression);
 
             if (files.Any())
             {
@@ -72,12 +68,13 @@ namespace Zhai.PictureView
 
                         if (isSecurity)
                         {
-                            return dir.EnumerateFiles().Where(PictureSupportExpression).Any();
+                            return dir.EnumerateFiles().Where(VideoSupport.VideoSupportExpression).Any();
                         }
-
                         return false;
 
                     }).ToList();
+
+                    base.OnPropertyChanged(new PropertyChangedEventArgs("Borthers"));
                 }
             });
         }

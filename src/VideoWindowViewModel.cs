@@ -59,6 +59,33 @@ namespace Zhai.VideoView
             set => Set(() => IsShowVideoListView, ref isShowVideoListView, value);
         }
 
+        private bool isShowFolderBorthersView = false;
+        public bool IsShowFolderBorthersView
+        {
+            get => isShowFolderBorthersView;
+            set => Set(() => IsShowFolderBorthersView, ref isShowFolderBorthersView, value);
+        }
+
+        private DirectoryInfo currentFolder;
+        public DirectoryInfo CurrentFolder
+        {
+            get => currentFolder;
+            set
+            {
+                if (Set(() => CurrentFolder, ref currentFolder, value))
+                {
+                    if (value != null)
+                    {
+                        var file = value.EnumerateFiles().Where(VideoSupport.VideoSupportExpression).FirstOrDefault();
+
+                        if (file != null)
+                        {
+                            OpenVideo(value, file.FullName, folder.Borthers).ConfigureAwait(false);
+                        }
+                    }
+                }
+            }
+        }
 
         public VideoWindowViewModel()
         {
@@ -237,6 +264,12 @@ namespace Zhai.VideoView
             }
 
         }, () => Folder != null && Folder.Any() && IsVideoCountMoreThanOne)).Value;
+
+        public RelayCommand ExecuteToggleFolderBorthersViewCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            IsShowFolderBorthersView = !IsShowFolderBorthersView;
+
+        }, () => CurrentVideo != null)).Value;
 
         #endregion
 
