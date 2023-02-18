@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Zhai.VideoView"             
-        xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
         xmlns:ZDY="http://www.zdyla.com/coding"
         xmlns:Properties="clr-namespace:Zhai.VideoView.Properties"
         xmlns:Converters="clr-namespace:Zhai.VideoView.Converters"  
@@ -53,11 +52,11 @@
     <Grid>
         <ZDY:Drawer IsOverlayed="False" IsRightDrawerOpen="{Binding IsShowFolderBorthersView}">
             <ZDY:Drawer.RightDrawerContent>
-                <Border Width="220" Margin="24 24 8 24">
+                <Border Width="220" Margin="24 24 8 24" Cursor="Arrow">
                     <Grid>
                         <Border HorizontalAlignment="Left" Margin="-12 0 0 0" Style="{StaticResource VerticalLinearGradientBorder}"/>
                         <ZDY:ListBox x:Name="FolderList"
-                                     ItemsSource="{Binding Folder.Borthers}" Cursor="Hand"
+                                     ItemsSource="{Binding Folder.Borthers}"
                                      VirtualizingPanel.ScrollUnit="Pixel"
                                      VirtualizingPanel.VirtualizationMode="Standard"
                                      VirtualizingPanel.IsVirtualizing="True"
@@ -87,17 +86,28 @@
                                                             Width="84" Height="56" Margin="1" Padding="1"
                                                             BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
                                                             SnapsToDevicePixels="true">
-                                                        <Image Stretch="UniformToFill" ToolTip="{Binding Name}" VerticalAlignment="Center"
+                                                        <Grid>
+                                                            <Image Stretch="UniformToFill" ToolTip="{Binding Name}" VerticalAlignment="Center"
                                                                        XamlServices:VideoDirtoryThumbService.VideoDirectory="{Binding}"/>
+                                                            <Border x:Name="RightMask" Width="28" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="#cc595959">
+                                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                    <TextBlock x:Name="VideoCountTextBlock" Text="{Binding Converter={Converters:FolderChildNumberConverter}}" HorizontalAlignment="Center" Margin="0 0 0 4"/>
+                                                                    <ZDY:Icon Kind="VideoPlay" HorizontalAlignment="Center" Width="12"/>
+                                                                </StackPanel>
+                                                            </Border>
+                                                        </Grid>
                                                     </Border>
                                                     <StackPanel DockPanel.Dock="Right">
                                                         <TextBlock Text="{Binding Name}" Margin="4 2 0 0" MaxHeight="32" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
                                                         <Border Background="{StaticResource Zhai.Famil.SelectionBrush}" HorizontalAlignment="Left" Padding="3 1" CornerRadius="2" Margin="4 4 0 0">
-                                                            <TextBlock Text="{Binding Converter={Converters:FolderChildNumberConverter}, StringFormat={}{0}个视频}" FontSize="11"/>
+                                                            <TextBlock Text="{Binding ElementName=VideoCountTextBlock, Path=Text, StringFormat={}{0}个视频}" FontSize="11"/>
                                                         </Border>
                                                     </StackPanel>
                                                 </DockPanel>
                                                 <ControlTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding Converter={Converters:FolderChildNumberConverter}}" Value="1">
+                                                        <Setter TargetName="RightMask" Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
                                                         <Setter Property="Background" Value="{StaticResource Zhai.Famil.SelectionActivedBrush}"/>
@@ -125,7 +135,7 @@
 
                 <Border x:Name="PlayButtonViewBox" Visibility="{Binding IsLoading, Converter={ZDY:BoolToInverseVisibilityConverter}}"
                         Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <ZDY:IconButton x:Name="PlayButton" Command="{Binding ExecutePlayCommand}" Icon="PlayThin" Foreground="White" Width="64" Height="64" IconSize="58" Margin="24"
+                    <ZDY:IconButton x:Name="PlayButton" Command="{Binding ExecutePlayCommand}" Icon="PlayThin" Foreground="White" Width="72" Height="72" IconSize="72" Margin="0 -36 0 0"
                                     Visibility="{Binding IsOpened,Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
                 </Border>
 
@@ -174,7 +184,7 @@
                                                                 <Grid>
                                                                     <Image Stretch="UniformToFill" Source="{Binding ThumbSource}" ToolTip="{Binding Name}" VerticalAlignment="Center"
                                                                            XamlServices:VideoThumbService.Video="{Binding}"/>
-                                                                    <Border Background="{StaticResource Zhai.Famil.SelectionBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="3 1" CornerRadius="2" Margin="4">
+                                                                    <Border Background="{StaticResource Zhai.Famil.SelectionBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="3 1" CornerRadius="2" Margin="2">
                                                                         <TextBlock Text="{Binding Duration, Converter={Converters:TimeSpanFromDurationConverter}}" FontSize="11"/>
                                                                     </Border>
                                                                 </Grid>

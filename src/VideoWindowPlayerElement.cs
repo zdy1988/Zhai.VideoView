@@ -281,8 +281,7 @@ namespace Zhai.VideoView
             this.Time = 0;
             this.Length = 0;
             this.Position = 0;
-
-            this.MediaPlayer.SetRate(1);
+            this.Rate = 1.0f;
         }
 
         public bool TryOpenVideo(string uriString)
@@ -389,10 +388,7 @@ namespace Zhai.VideoView
 
         public void SetRate(float rate)
         {
-            if (IsOpened)
-            {
-                this.MediaPlayer.SetRate(rate);
-            }
+            this.MediaPlayer?.SetRate(rate);
         }
 
         #endregion
