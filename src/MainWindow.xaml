@@ -104,7 +104,7 @@
                                                                 SnapsToDevicePixels="true">
                                                             <Grid>
                                                                 <Image Stretch="UniformToFill" ToolTip="{Binding Name}" VerticalAlignment="Center"
-                                                                       XamlServices:VideoDirtoryThumbService.VideoDirectory="{Binding}"/>
+                                                                       XamlServices:VideoThumbService.VideoDirectory="{Binding}"/>
                                                                 <Border x:Name="RightMask" Width="28" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="#cc595959">
                                                                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                                                         <TextBlock x:Name="VideoCountTextBlock" Text="{Binding Converter={Converters:FolderChildNumberConverter}}" HorizontalAlignment="Center" Margin="0 0 0 4"/>
