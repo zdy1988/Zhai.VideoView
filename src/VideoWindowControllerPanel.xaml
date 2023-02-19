@@ -26,7 +26,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Background="Transparent" ClipToBounds="True">
+    <Grid x:Name="ControllerPanelGrid" Background="Transparent" ClipToBounds="True">
         <Canvas IsHitTestVisible="False" Background="{StaticResource ShadedBackgroundBrush}" MouseDown="Canvas_MouseDown"/>
 
         <Grid VerticalAlignment="Bottom" Margin="0 24 0 6">
@@ -43,15 +43,9 @@
                         Thumb.DragStarted="PositionSlider_DragStarted"
                         Value="{Binding Mode=OneWay, Path=Position, Delay=1}"/>
 
-            <Grid Grid.Row="1" Margin="20 0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="200" />
-                </Grid.ColumnDefinitions>
-
-                <DockPanel Name="LeftControls" HorizontalAlignment="Left" Grid.Column="0">
-                    <StackPanel Orientation="Horizontal" Height="14">
+            <DockPanel Grid.Row="1" Margin="20 0">
+                <Border Name="LeftControls" DockPanel.Dock="Left" Width="200">
+                    <StackPanel Orientation="Horizontal" Height="14" HorizontalAlignment="Left">
                         <TextBlock FontSize="12" Text="{Binding Time, Converter={Converters:TimeSpanFromSecondsConverter}}"/>
                         <TextBlock FontSize="12" Text=" - "/>
                         <TextBlock FontSize="12" Text="{Binding Length, Converter={Converters:TimeSpanFromSecondsConverter}}"/>
@@ -65,62 +59,83 @@
                             </Style>
                         </StackPanel.Style>
                     </StackPanel>
-                </DockPanel>
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=ControllerPanelGrid, Path=ActualWidth,Converter={Converters:LessConverter}, ConverterParameter=700}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
 
-                <DockPanel Name="RightControls" HorizontalAlignment="Right" Grid.Column="2">
+                <Border Name="RightControls" DockPanel.Dock="Right" Width="200">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 -8 0">
+                        <ZDY:IconToggleButton x:Name="MuteButton" IsChecked="{Binding IsMuted, Mode=TwoWay}" CheckedIcon="VolumeSlash" Icon="VolumeHigh"/>
 
-                    <ZDY:IconToggleButton x:Name="MuteButton" IsChecked="{Binding IsMuted, Mode=TwoWay}" CheckedIcon="VolumeSlash" Icon="VolumeHigh"/>
-
-                    <ZDY:Slider2 Name="VolumeSlider" Cursor="Hand" Foreground="{StaticResource Zhai.Famil.ColorfulBrush}"
+                        <ZDY:Slider2 Name="VolumeSlider" Cursor="Hand" Foreground="{StaticResource Zhai.Famil.ColorfulBrush}"
                             IsEnabled="{Binding IsMuted, Converter={ZDY:BoolToInverseBoolConverter}}" 
                             Width="120" Minimum="0" Maximum="100" Margin="4 0" 
                             Value="{Binding Volume, Delay=1}"/>
 
-                    <ZDY:IconButton Icon="Adjust"/>
+                        <ZDY:IconToggleButton ToolTip="看过的视频" Icon="SidebarLeft" IsChecked="{Binding IsShowVideoHistoryView}"
+                                          CheckedIcon="SidebarRight" CheckedToolTip="关闭看过的视频"/>
+                    </StackPanel>
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=ControllerPanelGrid, Path=ActualWidth,Converter={Converters:LessConverter}, ConverterParameter=440}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
 
-                </DockPanel>
-
-                <DockPanel Name="CenterControls" HorizontalAlignment="Center" Grid.Column="1">
-                    <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Command="{Binding ExecuteOpenCommand}" Visibility="{Binding CurrentVideo, Converter={ZDY:NullableToVisibilityConverter}}"/>
-                    <Grid>
-                        <ZDY:Badged Badge="循环中" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 -40 0 0" Panel.ZIndex="1"
+                <Border Name="CenterControls">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Command="{Binding ExecuteOpenCommand}" Visibility="{Binding CurrentVideo, Converter={ZDY:NullableToVisibilityConverter}}"/>
+                        <Grid>
+                            <ZDY:Badged Badge="循环中" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 -40 0 0" Panel.ZIndex="1"
                                     Visibility="{Binding IsLooping, Mode=OneWay, Converter={ZDY:BoolToVisibilityConverter}}"
                                     BadgeBackground="{StaticResource Zhai.Famil.ColorfulBrush}"/>
-                        <ZDY:IconToggleButton x:Name="LoopingButton" CheckedIcon="Convertshape" CheckedToolTip="关闭循环" Icon="Convertshape" ToolTip="循环播放" IsChecked="{Binding IsLooping, Mode=TwoWay}" 
+                            <ZDY:IconToggleButton x:Name="LoopingButton" CheckedIcon="Repeat" CheckedToolTip="关闭循环" Icon="Repeat" ToolTip="循环播放" IsChecked="{Binding IsLooping, Mode=TwoWay}" 
                                           IsEnabled="{Binding CurrentVideo, Converter={ZDY:NullableToBoolConverter}}"/>
-                    </Grid>
-                    <ZDY:IconButton x:Name="PrevButton" Icon="Previous" ToolTip="上一个" Command="{Binding ExecutePrevCommand}" Visibility="{Binding IsVideoCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                    <ZDY:IconButton x:Name="PlayButton" Icon="Play2" ToolTip="播放" Command="{Binding ExecutePlayCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                    <ZDY:IconButton x:Name="PauseButton" Icon="Pause" ToolTip="暂停" Command="{Binding ExecutePauseCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
-                    <ZDY:IconButton x:Name="NextButton" Icon="Next" ToolTip="下一个" Command="{Binding ExecuteNextCommand}" Visibility="{Binding IsVideoCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                    <Grid>
-                        <ZDY:Badged HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 -40 -0 0" BadgeBackground="{StaticResource Zhai.Famil.ColorfulBrush}">
-                            <ZDY:Badged.Badge>
-                                <TextBlock>
+                        </Grid>
+                        <ZDY:IconButton x:Name="PrevButton" Icon="Previous" ToolTip="上一个" Command="{Binding ExecutePrevCommand}" Visibility="{Binding IsVideoCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                        <ZDY:IconButton x:Name="PlayButton" Icon="Play2" ToolTip="播放" Command="{Binding ExecutePlayCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                        <ZDY:IconButton x:Name="PauseButton" Icon="Pause" ToolTip="暂停" Command="{Binding ExecutePauseCommand}" Visibility="{Binding IsPaused, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
+                        <ZDY:IconButton x:Name="NextButton" Icon="Next" ToolTip="下一个" Command="{Binding ExecuteNextCommand}" Visibility="{Binding IsVideoCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                        <Grid>
+                            <ZDY:Badged HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 -40 -0 0" BadgeBackground="{StaticResource Zhai.Famil.ColorfulBrush}">
+                                <ZDY:Badged.Badge>
+                                    <TextBlock>
                                     <Run Text="×"/>
                                     <Run Text="{Binding Rate}"/>
-                                </TextBlock>
-                            </ZDY:Badged.Badge>
-                            <ZDY:Badged.Style>
-                                <Style TargetType="{x:Type ZDY:Badged}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Rate}" Value="1.0">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ZDY:Badged.Style>
-                        </ZDY:Badged>
-                        <ZDY:IconButton x:Name="RateButton" Icon="TimerStart1" ToolTip="倍速" IsEnabled="{Binding CurrentVideo, Converter={ZDY:NullableToBoolConverter}}"/>
-                        <ZDY:Popup Placement="Top" PlacementTarget="{Binding ElementName=RateButton}" AllowsTransparency="True" PopupAnimation="Fade">
-                            <ZDY:ListBox Width="80" ItemsSource="{Binding Rates}" DisplayMemberPath="Key" SelectedValuePath="Value" SelectedValue="{Binding Rate}"/>
-                        </ZDY:Popup>
-                    </Grid>
-                    <ZDY:IconToggleButton x:Name="VideoListViewToggleButton" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
+                                    </TextBlock>
+                                </ZDY:Badged.Badge>
+                                <ZDY:Badged.Style>
+                                    <Style TargetType="{x:Type ZDY:Badged}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Rate}" Value="1.0">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ZDY:Badged.Style>
+                            </ZDY:Badged>
+                            <ZDY:IconButton x:Name="RateButton" Icon="TimerStart1" ToolTip="倍速" IsEnabled="{Binding CurrentVideo, Converter={ZDY:NullableToBoolConverter}}"/>
+                            <ZDY:Popup Placement="Top" PlacementTarget="{Binding ElementName=RateButton}" AllowsTransparency="True" PopupAnimation="Fade">
+                                <ZDY:ListBox Width="80" ItemsSource="{Binding Rates}" DisplayMemberPath="Key" SelectedValuePath="Value" SelectedValue="{Binding Rate}"/>
+                            </ZDY:Popup>
+                        </Grid>
+                        <ZDY:IconToggleButton x:Name="VideoListViewToggleButton" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
                                           IsChecked="{Binding IsShowVideoListView}" IsEnabled="{Binding CurrentVideo, Converter={ZDY:NullableToBoolConverter}}"
                                           Visibility="{Binding IsVideoCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                </DockPanel>
-            </Grid>
+                    </StackPanel>
+                </Border>
+            </DockPanel>
         </Grid>
     </Grid>
 </UserControl>

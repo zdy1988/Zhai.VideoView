@@ -41,7 +41,7 @@ namespace Zhai.VideoView
 
         private void PositionSlider_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            ViewModel.SetPosition((float)this.PositionSlider.Value);
+            // ViewModel.SetPosition((float)this.PositionSlider.Value);
         }
 
         private void PositionSlider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

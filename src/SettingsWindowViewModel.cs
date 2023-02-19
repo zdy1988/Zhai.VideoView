@@ -28,20 +28,6 @@ namespace Zhai.VideoView
             }
         }
 
-        private bool isWindowDarked = Properties.Settings.Default.IsWindowDarked;
-        public bool IsWindowDarked
-        {
-            get => isWindowDarked;
-            set
-            {
-                if (Set(() => IsWindowDarked, ref isWindowDarked, value))
-                {
-                    Properties.Settings.Default.IsWindowDarked = value;
-                    Properties.Settings.Default.Save();
-                }
-            }
-        }
-
         public List<VideoSupportedItem> AllSupported { get; }
 
         public SettingsWindowViewModel()
@@ -77,11 +63,11 @@ namespace Zhai.VideoView
 
         public void SetAssociation(bool isSet)
         {
-            var appPath = Process.GetCurrentProcess().MainModule.FileName;
+            var appPath = Environment.ProcessPath;
 
             if (isSet)
             {
-                FileAssociator.CreateInstance(ext).Create("ZDY.PICTURE", null, null, new ExecApplication(appPath), null);
+                FileAssociator.CreateInstance(ext).Create(Properties.Settings.Default.AppName, null, null, new ExecApplication(appPath), null);
             }
             else
             {

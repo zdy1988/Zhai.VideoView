@@ -291,6 +291,8 @@ namespace Zhai.VideoView
 
             this.IsLoading = true;
 
+            this.AddVideoHistory(uriString);
+
             try
             {
                 var media = new Media(this.LibVLC, new Uri(uriString));
@@ -372,7 +374,10 @@ namespace Zhai.VideoView
             if (IsOpened)
             {
                 this.MediaPlayer.Volume = volume;
+            }
 
+            if (Properties.Settings.Default.Volume != volume)
+            {
                 Properties.Settings.Default.Volume = volume;
                 Properties.Settings.Default.Save();
             }
@@ -389,6 +394,11 @@ namespace Zhai.VideoView
         public void SetRate(float rate)
         {
             this.MediaPlayer?.SetRate(rate);
+
+            if (rate != 1)
+            {
+                SendNotificationMessage($"{rate} 倍速");
+            }
         }
 
         #endregion

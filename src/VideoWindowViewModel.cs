@@ -13,6 +13,7 @@ using Zhai.Famil.Common.Mvvm.Command;
 using Zhai.Famil.Common.Threads;
 using Zhai.Famil.Controls;
 using Zhai.PictureView;
+using static System.Windows.Forms.Design.AxImporter;
 
 namespace Zhai.VideoView
 {
@@ -59,6 +60,13 @@ namespace Zhai.VideoView
             set => Set(() => IsShowVideoListView, ref isShowVideoListView, value);
         }
 
+        private bool isShowVideoHistoryView = false;
+        public bool IsShowVideoHistoryView
+        {
+            get => isShowVideoHistoryView;
+            set => Set(() => IsShowVideoHistoryView, ref isShowVideoHistoryView, value);
+        }
+
         private bool isShowFolderBorthersView = false;
         public bool IsShowFolderBorthersView
         {
@@ -87,9 +95,18 @@ namespace Zhai.VideoView
             }
         }
 
+        private ConcurrentObservableCollection<VideoSeen> videoSeens;
+        public ConcurrentObservableCollection<VideoSeen> VideoSeens
+        {
+            get => videoSeens;
+            set => Set(() => VideoSeens, ref videoSeens, value);
+        }
+
         public VideoWindowViewModel()
         {
             InitPlayer();
+
+            LoadVideoHistory();
         }
 
         #region Methods
@@ -118,6 +135,46 @@ namespace Zhai.VideoView
 
         public Task OpenVideo(string filename)
             => OpenVideo(Directory.GetParent(filename), filename);
+
+        public void LoadVideoHistory()
+        {
+            try
+            {
+                var list = System.Text.Json.JsonSerializer.Deserialize<List<VideoSeen>>(Properties.Settings.Default.VideoHistory);
+
+                if (list != null)
+                {
+                    VideoSeens = new ConcurrentObservableCollection<VideoSeen>(list);
+
+                    return;
+                }
+            }
+            catch
+            {
+
+            }
+
+            VideoSeens = new ConcurrentObservableCollection<VideoSeen>();
+        }
+
+        public void AddVideoHistory(string filename)
+        {
+            if (VideoSeens.Any() && VideoSeens.First().Path == filename)
+            {
+
+            }
+            else
+            {
+                var seen = new VideoSeen { Path = filename, Name = Path.GetFileNameWithoutExtension(filename), Date = DateTime.Now };
+                VideoSeens.Insert(0, seen);
+            }
+
+            ThreadPool.QueueUserWorkItem(_ =>
+            {
+                Properties.Settings.Default.VideoHistory = System.Text.Json.JsonSerializer.Serialize(VideoSeens.Take(20).ToList());
+                Properties.Settings.Default.Save();
+            });
+        }
 
         #endregion
 
@@ -264,6 +321,37 @@ namespace Zhai.VideoView
             }
 
         }, () => Folder != null && Folder.Any() && IsVideoCountMoreThanOne)).Value;
+
+        public RelayCommand<VideoSeen> ExecutePlaySeenVideoCommand => new Lazy<RelayCommand<VideoSeen>>(() => new RelayCommand<VideoSeen>(async seen =>
+        {
+            if (seen != null && !string.IsNullOrWhiteSpace(seen.Path) && File.Exists(seen.Path))
+            {
+                if (Folder != null && Path.GetDirectoryName(seen.Path) == Folder.Current.FullName)
+                {
+                    var video = Folder.Where(t => t.VideoPath == seen.Path).FirstOrDefault();
+
+                    if (video != null)
+                    {
+                        CurrentVideo = video;
+
+                        return;
+                    }
+                }
+
+                await OpenVideo(seen.Path);
+            }
+            else
+            {
+                SendNotificationMessage("播放失败！文件已丢失...");
+            }
+
+        }, seen => VideoSeens != null && VideoSeens.Any() && File.Exists(seen.Path))).Value;
+
+        public RelayCommand ExecuteToggleVideoHistoryViewCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            IsShowVideoHistoryView = !IsShowVideoHistoryView;
+
+        }, () => CurrentVideo != null)).Value;
 
         public RelayCommand ExecuteToggleFolderBorthersViewCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
